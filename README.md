@@ -1,3 +1,3 @@
 # Projekt-Programowanie-Obiektowe
 Jest to projekt z programowania obiektowego.
-Tytuł projektu: ...
+Tytuł projektu: "Wampiry"
