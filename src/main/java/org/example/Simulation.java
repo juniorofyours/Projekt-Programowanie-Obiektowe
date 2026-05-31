@@ -11,6 +11,8 @@ public class Simulation{
     private int numSteps;
     private int hour;
     private Boolean isCycling;
+    private int sunsetHour;
+    private int sunriseHour;
 
     public Simulation(int width, int height){
         board=new Board(width, height);
@@ -20,6 +22,8 @@ public class Simulation{
         numSteps=0;
         hour=0;
         container=null;
+        sunriseHour=6;
+        sunsetHour=18;
     }
 
     public void addAgent(Agent agent){ //dodaje agenta na planszę i do listy agents w symulacji
@@ -102,6 +106,17 @@ public class Simulation{
         if(isCycling==true) if(numSteps%50==0) {
             hour=(hour+1)%24;
         }
+    }
+
+    public int getCurrentHour(){
+        return hour;
+    }
+
+    public int getSunriseHour(){
+        return sunriseHour;
+    }
+    public int getSunsetHour(){
+        return sunsetHour;
     }
 
     private void step(){ //metoda oznaczająca jeden krok symulacji i wywołująca wszystkie meotdy
