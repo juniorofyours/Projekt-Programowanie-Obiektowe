@@ -98,7 +98,7 @@ public class Human extends Agent{
                                 //ludzi by z danym prawdopodobienstwem zamienic ich w wampiry
         if(energyLevel==0) {
             if(rand.nextFloat(rangeToTransform) > this.transformationProb) {
-                Agent newVampire = Vampire(this.simulation, this.board, this.getX(), this.getY(), vampEnergyBoost, vampEnergyLoss);
+                Agent newVampire = new Vampire(this.simulation, this.board, this.getX(), this.getY(), vampEnergyBoost, vampEnergyLoss);
                 this.board.addToBoard(newVampire);
             }
             simulation.removeAgent(this);
