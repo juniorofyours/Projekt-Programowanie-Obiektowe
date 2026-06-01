@@ -115,4 +115,9 @@ public class Simulation{
         updateHour();
 
     }
+
+    //zwraca aktualną liczbę kroków symulacji
+    public int getCurrentStep(){
+        return this.numSteps;
+    }
 }

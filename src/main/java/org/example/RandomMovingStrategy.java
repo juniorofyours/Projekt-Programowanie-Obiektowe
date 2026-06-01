@@ -14,7 +14,7 @@ public class RandomMovingStrategy implements MovingStrategy{ //strategia do loso
             try { //tutaj występuje blok try catch łapiący błąd stworzonego w
 //                pliku Cell.java typu UnusableCellException, czyli jeśli agent nie może przejść do danej komórki
 //                , to losuje jeszcze raz nowe dx i dy i próbuje znowu się poruszyć
-                dx=rand.nextInt(3)- 1;
+                dx=rand.nextInt(3)- 1; //losuje liczbe miedzy -1, 0 i 1
                 dy =rand.nextInt(3) - 1;
                 position.move(dx,dy);
                 success=true;
