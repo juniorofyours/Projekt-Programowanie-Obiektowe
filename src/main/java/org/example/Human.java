@@ -77,7 +77,7 @@ public class Human extends Agent{
             Agent newOne = new Human(this.simulation, this.board, randX, randY, this.transformationProb, this.addProb, this.energyBoost, this.energyLoss);
 
             //dodanie nowego agenta na plansze
-            this.board.addToBoard(newOne);
+            this.simulation.addAgent(newOne);
             this.addProb=0;
         }
         this.addProb+=addToAddProb;
@@ -89,8 +89,7 @@ public class Human extends Agent{
         this.boostEnergy(this.energyBoost);
 
         //usuniecie czosnku
-        Cell cellWithGarlic=board.getCell(this.position.getX(), this.position.getY());
-        cellWithGarlic.removeGarlic(garlic);
+        this.simulation.removeGarlic(garlic);
 
         //dodanie ochrony
         if(this.stepsToReset<=0) {
@@ -108,18 +107,23 @@ public class Human extends Agent{
 
     /*nadpisane metody:*/
     @Override
-    public boolean tryRemove(){ //metoda uswająca agenta, jesli ma energię=0, powinna być nadpisana dla
-                                //ludzi by z danym prawdopodobienstwem zamienic ich w wampiry
-        if(energyLevel==0) {
-            if(rand.nextFloat(rangeOfProbabilityToTransform) < this.transformationProb) {
+    public boolean tryRemove() { //metoda uswająca agenta, jesli ma energię=0, albo kiedy Human jest wyszkolony przez TrainedHuman
+        if (energyLevel == 0) {
+            if (rand.nextFloat(rangeOfProbabilityToTransform) < this.transformationProb) {
                 Agent newVampire = new Vampire(this.simulation, this.board, this.position.getX(), this.position.getY(), vampEnergyBoost, vampEnergyLoss);
-                this.board.addToBoard(newVampire);
+                this.simulation.addAgent(newVampire);
             }
             //usuniecie osoby (Human)
-            this.board.removeFromBoard(this);
             this.simulation.removeAgent(this);
             return true;
         }
+        //## przyszle korekty: zmienic impelementacje rekrutacji:
+        /*Cell cell=board.getCell(position.getX(), position.getY());
+        for(Agent agent : cell.getAgents()){
+            if(agent instanceof TrainedHuman){
+                ((TrainedHuman) agent).tryRecruit(this);
+            }
+        }*/
         return false;
     }
 

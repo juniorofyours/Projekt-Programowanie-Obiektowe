@@ -62,12 +62,22 @@ public class TrainedHuman extends Human{
                 this.tryThrow();
             }
         }
-        //rekrutowanie osob
-        for(Agent agent : cell.getAgents()){
-            if(agent instanceof Human){
-                this.tryRecruit((Human)agent);
+        //rekrutajcja osob zachodzi wewnatrz metody tryRemove w klasie Human
+    }
+
+    //w porownaniudo klasy Human, Trainedhuman nie moze zostac znowu TrainedHuman, dlatego w tym miejscu jest override
+    @Override
+    public boolean tryRemove() { //metoda uswająca agenta, jesli ma energię=0, albo kiedy Human jest wyszkolony przez TrainedHuman
+        if (energyLevel == 0) {
+            if (rand.nextFloat(rangeOfProbabilityToTransform) < this.transformationProb) {
+                Agent newVampire = new Vampire(this.simulation, this.board, this.position.getX(), this.position.getY(), vampEnergyBoost, vampEnergyLoss);
+                this.simulation.addAgent(newVampire);
             }
+            //usuniecie osoby (TrainedHuman)
+            this.simulation.removeAgent(this);
+            return true;
         }
+        return false;
     }
 
     /*pozostale metody*/
@@ -81,10 +91,9 @@ public class TrainedHuman extends Human{
                 Agent newTrainedHuman = new TrainedHuman(this.simulation, this.board, this.position.getX(), this.position.getY(), human.transformationProb, human.addProb, 0, 0, human.energyBoost, human.vampEnergyLoss);
 
                 //dodanie osoby wyszkolonej
-                this.board.addToBoard(newTrainedHuman);
+                this.simulation.addAgent(newTrainedHuman);
 
                 //usuniecie zwyklej osoby
-                this.board.removeFromBoard(human);
                 this.simulation.removeAgent(human);
 
                 this.rectruitmentProb=0;
@@ -93,7 +102,7 @@ public class TrainedHuman extends Human{
     }
 
     //metoda: proba rozrzucenia czosnku
-    private void tryThrow() {
+    private void tryThrow() { //##do zmiany: prawdopodbienstwo
         //warunek weakend i garlickStock!=0 jest sprawdzany wewnatrz interact()
         if(rand.nextFloat(rangeOfProbabilityOfThrow) < this.throwProb) {
             Cell cell = board.getCell(this.position.getX(), this.position.getY());
@@ -109,14 +118,8 @@ public class TrainedHuman extends Human{
         this.throwProb+=addToThrowProb;
     }
 
-    /*do zrobienia:*/
-    private void seekContiainer() {
-
-    }
-
     private void collectGarlic() {
-
+        this.garlicStock=this.garlicStockMax;
     }
 
 }
-//##do zmiany: prawdopodbienstwo
