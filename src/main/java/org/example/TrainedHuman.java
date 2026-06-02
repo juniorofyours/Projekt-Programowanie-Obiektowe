@@ -6,11 +6,10 @@ public class TrainedHuman extends Human{
     private int garlicStock;
     private int garlicStockMax;
     private int lastWeakeningStep;
-    private int stepsUntilGainingPower; //ile krokow zostalo do weakend=false
     private boolean weakend;
 
     /*DODAC w przyszlosci do klasy z parametrami:*/
-    final int stepsForGain = 2; //np    //dla stepsUntilGainPower
+    final int stepsForGain = 2; //np    //- ile krkokow zajmuje wylaczeni etrybu weakend
     final float rangeOfProbabilityOfRecruitment = 10.0f; //zakres prawdop., z jakim osoba moze zostac zrekrutowana
     final float addToRecruitmentProb=0.05f; //dodaje sie do recruitmentProb
     final float rangeOfProbabilityOfThrow = 10.0f;
@@ -25,7 +24,6 @@ public class TrainedHuman extends Human{
 
         //wartosci poczatkowe
         this.lastWeakeningStep=0;
-        this.stepsUntilGainingPower=0;
         this.weakend=false;
         this.garlicStock=0;
         this.garlicStockMax=3; //np.
@@ -43,11 +41,10 @@ public class TrainedHuman extends Human{
         super.updateCurrentState();
 
         //czy koniec trybu weakend:
-        if(this.stepsUntilGainingPower <= 0) {
+        if(this.lastWeakeningStep <= this.simulation.getCurrentStep()-stepsForGain) {
             this.weakend=false;
         }
         else {
-            stepsUntilGainingPower-=1;
             this.weakend=true;
         }
     }
@@ -122,3 +119,4 @@ public class TrainedHuman extends Human{
     }
 
 }
+//##do zmiany: prawdopodbienstwo
