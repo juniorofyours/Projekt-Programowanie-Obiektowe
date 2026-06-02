@@ -6,7 +6,6 @@ public class Simulation{
     private Board board;
     private GarlicContainer container;
     private ArrayList<Agent> agents;
-    private ArrayList<Human> newPeople;
     private ArrayList<Garlic> garlics;
     private int numSteps;
     private int hour;
@@ -17,7 +16,6 @@ public class Simulation{
     public Simulation(int width, int height){
         board=new Board(width, height);
         agents=new ArrayList<>();
-        newPeople=new ArrayList<>();
         garlics=new ArrayList<>();
         numSteps=0;
         hour=0;
@@ -35,15 +33,6 @@ public class Simulation{
         agents.remove(agent);
     }
 
-    public void addNewHuman(Human human){
-        newPeople.add(human);
-    } //dodaje nowego człowieka do listy newPeople,
-//    konkretnie gdy ludzie rodzą nowych ludzi (przez to, że iterujemy po wszystkich ludziach i ich metodzie tryAdd,
-//    mogą oni dodać nowych ludzi, ale jeśli by ich dodali od razu do listy agents, wystąpiłyby problemy z iteracją
-//    po ludziach, bo by dynamicznie pojawiły się nowe elementy właśnie do tej listy po której iterujemy. Przez to
-//    najpierw dodajemy nowych ludzi do listy newPeople, a później opróżnaimy tę listę i dodajemy tych ludzi do agents
-//    za pomocą metody addNewPeopleToAgents
-
     public void addGarlic(Garlic garlic){ //dodaje nowy czosnek na planszę i do listy garlics
         board.addGarlicToBoard(garlic);
         garlics.add(garlic);
@@ -53,23 +42,12 @@ public class Simulation{
         garlics.remove(garlic);
     }
 
-    private void addNewPeopleToAgents(){ //dodaje wszystkie elementy z listy newPeople na planszę i do listy agents,
-//        oraz opróżnia listę newPeople
-        for(Human human : newPeople){
-            addAgent(human);
-        }
-        newPeople.clear();
-    }
-
-    private void tryAddNewPeople(){ //iteruje po wszystkich ludziach i wywołuje na nich metodę tryAdd, która
-//        dodaje z pewnym prawdopodobieństwem nowego człowieka do listy newHuman. Po skończeniu pętli wszystkie
-//        nowe osoby są dodawane do planszy i listy agents za pomocą addNewPeopleToAgents()
-        for(Agent agent :agents){
-            if(agent instanceof Human){
-                ((Human) agent).tryAdd();
+    private void tryAddNewPeople(){ //iteruje po wszystkich ludziach i wywołuje na nich metodę tryAdd
+        for(int i=0; i<agents.size();i++){
+            if(agents.get(i) instanceof Human){
+                ((Human) agents.get(i)).tryAdd();
             }
         }
-        addNewPeopleToAgents();
     }
 
     private void updateAgentStates(){ //iteruje po wszystkich agentach i aktualizuje ich stan( dla człowieka
