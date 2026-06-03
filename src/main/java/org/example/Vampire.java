@@ -1,5 +1,7 @@
 package org.example;
 
+import java.util.List;
+
 public class Vampire extends Agent{
     private Boolean hidden;
     public Vampire(Simulation simulation, Board board, int x, int y, int energyBoost, int energyLoss){
@@ -34,8 +36,9 @@ public class Vampire extends Agent{
                 attack((Human)agent);
             }
         }
-        for(Garlic garlic : cell.getGarlics()){
-            getAttacked(garlic);
+        List<Garlic> garlics=cell.getGarlics();
+        for(int i=0; i<garlics.size();){
+            this.getAttacked(garlics.get(i));
         }
     }
 
@@ -43,9 +46,11 @@ public class Vampire extends Agent{
         if(human.isSafe()) return;
         boostEnergy(energyBoost);
         human.loseEnergy(human.getEnergyLoss());
+        ConsoleColors.printlnYellow("<<Atak wampira na czlowieka>>");
     }
     private void getAttacked(Garlic garlic){
         simulation.removeGarlic(garlic);
         loseEnergy(energyLoss);
+        ConsoleColors.printlnYellow("<<Zaatakowanie wampira przez czosnek>>");
     }
 }

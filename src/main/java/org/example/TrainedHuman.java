@@ -1,5 +1,7 @@
 package org.example;
 
+import java.util.List;
+
 public class TrainedHuman extends Human{
     private float rectruitmentProb;
     private float throwProb;
@@ -25,8 +27,9 @@ public class TrainedHuman extends Human{
         //wartosci poczatkowe
         this.lastWeakeningStep=0;
         this.weakend=false;
-        this.garlicStock=0;
+        this.garlicStock=3;
         this.garlicStockMax=3; //np.
+        this.trained=true;
 
     }
 
@@ -54,30 +57,21 @@ public class TrainedHuman extends Human{
         Cell cell=board.getCell(this.position.getX(), this.position.getY());
         if(!this.weakend) {
             //zjedzenie czosnku
-            for (Garlic garlic : cell.getGarlics()) {
-                this.eat(garlic);
+            List<Garlic> garlics=cell.getGarlics();
+            for(int i=0; i<garlics.size();){
+                this.eat(garlics.get(i));
             }
             //rozrzucanie czosnku
             if(this.garlicStock>0) {
                 this.tryThrow();
             }
         }
-        //rekrutajcja osob zachodzi wewnatrz metody tryRemove w klasie Human
-    }
-
-    //w porownaniudo klasy Human, Trainedhuman nie moze zostac znowu TrainedHuman, dlatego w tym miejscu jest override
-    @Override
-    public boolean tryRemove() { //metoda uswająca agenta, jesli ma energię=0, albo kiedy Human jest wyszkolony przez TrainedHuman
-        if (energyLevel == 0) {
-            if (rand.nextFloat(rangeOfProbabilityToTransform) < this.transformationProb) {
-                Agent newVampire = new Vampire(this.simulation, this.board, this.position.getX(), this.position.getY(), vampEnergyBoost, vampEnergyLoss);
-                this.simulation.addAgent(newVampire);
+        //rekrutowanie osob
+        for(Agent agent : cell.getAgents()){
+            if(agent instanceof Human){
+                this.tryRecruit((Human)agent);
             }
-            //usuniecie osoby (TrainedHuman)
-            this.simulation.removeAgent(this);
-            return true;
         }
-        return false;
     }
 
     /*pozostale metody*/
@@ -86,15 +80,13 @@ public class TrainedHuman extends Human{
     //prawdop. dziala na zasadzie, ze zwieksza sie zmienna instancyjna recruitmentProb (dzieki stalej addToRecrutitmentProb)
     //i jezeli zmienna jest wieksza niz zmienna losowa wylosowana z zakresu rangeOfProbabilityRecrutiment, to zachodzi rekrutacja
     private void tryRecruit(Human human) {
-            if(rand.nextFloat(rangeOfProbabilityOfRecruitment) < this.rectruitmentProb) {
+            if(!human.isTrained() && (rand.nextFloat(rangeOfProbabilityOfRecruitment) < this.rectruitmentProb)) {
                 //throwProb i recruitmentProb = 0 dla nowej wyszkolonej osoby:
                 Agent newTrainedHuman = new TrainedHuman(this.simulation, this.board, this.position.getX(), this.position.getY(), human.transformationProb, human.addProb, 0, 0, human.energyBoost, human.vampEnergyLoss);
 
-                //dodanie osoby wyszkolonej
-                this.simulation.addAgent(newTrainedHuman);
+                    simulation.replaceAgent(human, newTrainedHuman);
 
-                //usuniecie zwyklej osoby
-                this.simulation.removeAgent(human);
+                ConsoleColors.printlnYellow("<<Wyrekrutowanie czlowieka>>");
 
                 this.rectruitmentProb=0;
             }
@@ -105,15 +97,15 @@ public class TrainedHuman extends Human{
     private void tryThrow() { //##do zmiany: prawdopodbienstwo
         //warunek weakend i garlickStock!=0 jest sprawdzany wewnatrz interact()
         if(rand.nextFloat(rangeOfProbabilityOfThrow) < this.throwProb) {
-            Cell cell = board.getCell(this.position.getX(), this.position.getY());
 
             Garlic garlic = new Garlic(this.simulation, this.board, this.position.getX(), this.position.getY());
-            this.board.addGarlicToBoard(garlic);
+            this.simulation.addGarlic(garlic);
 
             this.garlicStock-=1;
             this.weakend=true;
             this.lastWeakeningStep=simulation.getCurrentStep();
             this.throwProb=0;
+            ConsoleColors.printlnYellow("<<Rozrzucenie nowego czosnku>>");
         }
         this.throwProb+=addToThrowProb;
     }

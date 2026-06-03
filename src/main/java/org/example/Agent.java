@@ -11,6 +11,8 @@ public abstract class Agent {
     protected int energyMax;
     protected int energyBoost;
     protected int energyLoss;
+    protected static int nextID=0;
+    protected int id;
     protected Random rand=new Random();
 
     public Agent(Simulation simulation, Board board, int x, int y, int energyBoost, int energyLoss){
@@ -22,6 +24,7 @@ public abstract class Agent {
         this.energyBoost=energyBoost;
         this.energyLoss=energyLoss;
         this.movement=new RandomMovingStrategy();
+        this.id=nextID++;
     }
 
     public int getX(){
@@ -38,11 +41,13 @@ public abstract class Agent {
 
     public void move(){ //metoda wywołująca metodę move dla konkretnej strategii poruszania się
         movement.move(position);
+        System.out.println("-Krok agenta nr."+id+" ("+this.getClass().getSimpleName()+") "+"[ "+position.getX()+" "+position.getY()+" ]");
     }
     public boolean tryRemove(){ //metoda suuswająca agenta, jesli ma energię=0, powinna być nadpisana dla
 //        ludzi by z danym prawdopodobienstwem zamienic ich w wampiry
         if(energyLevel==0) {
             simulation.removeAgent(this);
+            ConsoleColors.printlnRed("<<Smierc agenta>>");
             return true;
         }
         return false;

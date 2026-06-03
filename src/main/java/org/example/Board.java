@@ -1,5 +1,7 @@
 package org.example;
 
+import java.util.List;
+
 public class Board {
     private Cell[][] grid;
     private int width;
@@ -37,6 +39,15 @@ public class Board {
         int y=agent.getY();
 
         grid[x][y].addAgent(agent);
+    }
+
+    public void replaceAgentInCell(Agent agentToBeReplaced, Agent newAgent){
+        int x=agentToBeReplaced.getX();
+        int y=agentToBeReplaced.getY();
+
+        List<Agent> agents=grid[x][y].getAgents();
+        int index=agents.indexOf(agentToBeReplaced);
+        agents.set(index, newAgent);
     }
 
     public void removeGarlicFromBoard(Garlic garlic){ //usuwa czosnek z komórki

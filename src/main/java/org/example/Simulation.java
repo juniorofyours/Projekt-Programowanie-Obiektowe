@@ -24,6 +24,30 @@ public class Simulation{
         sunsetHour=18;
     }
 
+    public void init(){
+//        parametry
+        isCycling=true;
+
+        int min_x=200;
+        int max_x=300;
+        int min_y=0;
+        int max_y=50;
+
+        int energy_boost=1000;
+        int energy_loss=1000;
+
+        float transformation_prob=5f;
+        float add_prob=1f;
+        float recruitment_prob=10f;
+        float throw_prob=10f;
+
+        container=new GarlicContainer(min_x, max_x, min_y,max_y);
+        board.addGarlicContainer(container);
+        addAgent(new Vampire(this, board, 5, 10, energy_boost, energy_loss));
+        addAgent(new Human(this, board, 5, 10,transformation_prob,add_prob, energy_boost, energy_loss));
+        addAgent(new TrainedHuman(this, board, 5, 10,transformation_prob,add_prob,recruitment_prob, throw_prob, energy_boost, energy_loss));
+    }
+
     public void addAgent(Agent agent){ //dodaje agenta na planszę i do listy agents w symulacji
         board.addToBoard(agent);
         agents.add(agent);
@@ -31,6 +55,16 @@ public class Simulation{
     public void removeAgent(Agent agent){ //usuwa agenta z planszy i z listy agents w symulacji
         board.removeFromBoard(agent);
         agents.remove(agent);
+    }
+
+    public void replaceAgent(Agent agentToBeReplaced, Agent newAgent){ //metoda, która zmienia już istniejący element
+//        listy na nowy element, przydatna przy zamianie człowieka w wampira, lub człowieka w wytrenowanego człowieka, żeby
+//        uniknąć problemów z iteracją po agentach w liście, metoda ta wywołuje również board.replaceAgentInCell, która robi to samo,
+//        tylko, że z listami w komórkach (Cell)
+        int index=agents.indexOf(agentToBeReplaced);
+        agents.set(index, newAgent);
+
+        board.replaceAgentInCell(agentToBeReplaced, newAgent);
     }
 
     public void addGarlic(Garlic garlic){ //dodaje nowy czosnek na planszę i do listy garlics
@@ -68,8 +102,9 @@ public class Simulation{
     private void conductAgentInteractions(){ //iteruje po wszystkich agentach i wywołuje ich metodę interakcji
 //        z otoczeniem, implementującą ich wszystkie zachowania typu zjedzenie cozsnku, zaatakowanie, rozrzucenie
 //        czosnku itd
-        for(Agent agent : agents){
-            agent.interact();
+//        System.out.println("Interakcje agentów");
+        for(int i=0;i<agents.size();i++){
+            agents.get(i).interact();
         }
     }
     private void tryRemoveAgents(){ //iteruje po wszystkich agentach i ich metodzie sprawdzającej czy powinni umrzeć
@@ -101,8 +136,9 @@ public class Simulation{
         return sunsetHour;
     }
 
-    private void step(){ //metoda oznaczająca jeden krok symulacji i wywołująca wszystkie meotdy
+    public void step(){ //metoda oznaczająca jeden krok symulacji i wywołująca wszystkie meotdy
 //        iterujące po agentach i zmieniające ich stan, położenie, przeprowadzjące ich interkację, śmerć, ...
+        ConsoleColors.printlnBlue("\nKrok: "+numSteps+ ", godzina: "+hour);
         updateAgentStates();
         tryAddNewPeople();
         moveAgents();

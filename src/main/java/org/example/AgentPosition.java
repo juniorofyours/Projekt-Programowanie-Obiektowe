@@ -15,8 +15,8 @@ public class AgentPosition {
 
     public void move(int dx, int dy){ //metoda zmieniająca pozycję agenta o dany dx i dy i aktualizująca
 //        położenie agenta na planszy
-        int newX=(x+dx)%board.getWidth();
-        int newY=(y+dy)%board.getHeight();
+        int newX=Math.floorMod(x+dx, board.getWidth());
+        int newY=Math.floorMod(y+dy, board.getHeight());
         board.updateAgent(agent, newX, newY);
         x=newX;
         y=newY;

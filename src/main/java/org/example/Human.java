@@ -1,5 +1,7 @@
 package org.example;
 
+import java.util.List;
+
 public class Human extends Agent{
     /*zmienne instancyjne*/
     protected float transformationProb;
@@ -7,6 +9,7 @@ public class Human extends Agent{
     protected int stepsToReset;
     protected int lastGarlicStep;
     protected boolean safe;
+    protected boolean trained;
 
     /*DODAC w przyszlosci do klasy z parametrami:*/
     final float rangeOfProbabilityOfAdd = 10.0f; //albo np. = addProb+1 //parametr zakresu z jakim prawdop. osoba moze rodzic
@@ -31,6 +34,7 @@ public class Human extends Agent{
         this.lastGarlicStep=0;
         this.stepsToReset=0;
         this.safe=false;
+        this.trained=false;
     }
 
     /*impelementacja metod, ktore w klasie Agent sa abstrakcyjne:*/
@@ -49,8 +53,9 @@ public class Human extends Agent{
 
     public void interact(){ //metoda: interakcja człowieka z otoczeniem
         Cell cell=board.getCell(this.position.getX(), this.position.getY());
-        for(Garlic garlic : cell.getGarlics()){
-            this.eat(garlic);
+        List<Garlic> garlics=cell.getGarlics();
+        for(int i=0; i<garlics.size();){
+            this.eat(garlics.get(i));
         }
     }
 
@@ -64,21 +69,28 @@ public class Human extends Agent{
         if (rand.nextFloat(rangeOfProbabilityOfAdd) < this.addProb) {
 
             //losowanie komórki, która jest dostępna (isUsable)      //##dla przyszlych korekt: zostawiamy tak czy bez losowania?
-            boolean statusCheck = false;
-            int randX, randY;
-            {
-                randX=rand.nextInt(this.board.getWidth()); //od 0 do boardWidth
-                randY=rand.nextInt(this.board.getHeight()); // od 0 do boardHeight
-                Cell checkCell = board.getCell(randX, randY);
-                statusCheck = checkCell.isUsable();
-            }while(statusCheck);
+//           skomentowałem twój kod z losowaniem miejsca dla nowej osoby, bo myślę, że randomowe pojawianie się nowej osoby
+//            znikąd w losowym miejscu by nie wyglądało najlpiej + nielosowanie miejsca ułatwia znacząco kod. Można później
+//            przywrócić losowanie miejsca, ale wtedy trzeba to zrobić z blokiem try catch
+            boolean success;
+//            int randX, randY;
+            simulation.addAgent(new Human(this.simulation, this.board, this.getX(), this.getY(),
+                    this.transformationProb, this.addProb, this.energyBoost, this.energyLoss));
 
-            //tworzenie nowego czlowieka
-            Agent newOne = new Human(this.simulation, this.board, randX, randY, this.transformationProb, this.addProb, this.energyBoost, this.energyLoss);
-
-            //dodanie nowego agenta na plansze
-            this.simulation.addAgent(newOne);
+//            do{
+//                try{
+//                    randX=rand.nextInt(this.board.getWidth()); //od 0 do boardWidth
+//                    randY=rand.nextInt(this.board.getHeight()); // od 0 do boardHeight
+//                    simulation.addAgent(new Human(this.simulation, this.board, randX, randY,
+//                            this.transformationProb, this.addProb, this.energyBoost, this.energyLoss));
+//                    success=true;
+//                }catch(UnusableCellException error){
+//                    success=false;
+//                }
+//            }while(!success);
             this.addProb=0;
+            ConsoleColors.printlnGreen("<<Dodanie nowego czlowieka>>");
+//
         }
         this.addProb+=addToAddProb;
     }
@@ -99,11 +111,14 @@ public class Human extends Agent{
             //ustawienie liczby krokow z ochroną
             this.stepsToReset = finalOfReset;
         }
+        ConsoleColors.printlnYellow("<<Zjedzenie czosnku przez czlowieka>>");
     }
+
 
     public boolean isSafe(){
         return this.safe;
     }
+    public boolean isTrained(){return trained;}
 
     /*nadpisane metody:*/
     @Override
@@ -111,11 +126,15 @@ public class Human extends Agent{
         if (energyLevel == 0) {
             if (rand.nextFloat(rangeOfProbabilityToTransform) < this.transformationProb) {
                 Agent newVampire = new Vampire(this.simulation, this.board, this.position.getX(), this.position.getY(), vampEnergyBoost, vampEnergyLoss);
-                this.simulation.addAgent(newVampire);
+                this.simulation.replaceAgent(this, newVampire);
+                ConsoleColors.printlnRed("<<Zamiana czlowieka w wampira>>");
+                return false;
+            } else {
+                //usuniecie osoby (Human)
+                this.simulation.removeAgent(this);
+                ConsoleColors.printlnRed("<<Smierc czlowieka>>");
+                return true;
             }
-            //usuniecie osoby (Human)
-            this.simulation.removeAgent(this);
-            return true;
         }
         //## przyszle korekty: zmienic impelementacje rekrutacji:
         /*Cell cell=board.getCell(position.getX(), position.getY());
