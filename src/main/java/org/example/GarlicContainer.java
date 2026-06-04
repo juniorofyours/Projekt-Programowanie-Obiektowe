@@ -19,6 +19,7 @@ public class GarlicContainer {
         this.y_min=y_min;
         this.y_max=y_max;
         containerCells=new GarlicContainerCell[width][height];
+        fillContainer();
 
     }
     private void fillContainer(){ //wypełnia kontener komórkami kontenera

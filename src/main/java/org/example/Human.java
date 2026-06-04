@@ -64,9 +64,10 @@ public class Human extends Agent{
     //prawdopodobienstwo dziala na zasadzie, czy losuje sie liczba z jakiegos zakresu (rangeOfProbabilityOfAdd) i porownuje sie do
     //zmiennej (addProb) danego obiektu, która się zwiększa z każdym krokiem (+=addToAddProb)
     public void tryAdd(){
-
         //czy osoba pojawi sie (czy zmienna losowa jest wieksza niz zadana wartosc)
-        if (rand.nextFloat(rangeOfProbabilityOfAdd) < this.addProb) {
+//        Dałem 0 zamiast addProb, bo addProb robiło się nieprzewidywalne i szybko rosło i praktycznie
+//        co krok rodziło się coraz więcej ludzi zmierzając do nieskonczonosci (co mi zawiesiło komputer)
+        if (rand.nextFloat(rangeOfProbabilityOfAdd) < 0) {
 
             //losowanie komórki, która jest dostępna (isUsable)      //##dla przyszlych korekt: zostawiamy tak czy bez losowania?
 //           skomentowałem twój kod z losowaniem miejsca dla nowej osoby, bo myślę, że randomowe pojawianie się nowej osoby

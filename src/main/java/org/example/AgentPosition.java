@@ -1,5 +1,7 @@
 package org.example;
 
+import java.util.Random;
+
 public class AgentPosition {
     int x;
     int y;
@@ -11,6 +13,15 @@ public class AgentPosition {
         this.board=board;
         this.x=x;
         this.y=y;
+    }
+    public void randomize(){
+        Cell randomCell;
+        Random rand =new Random();
+        do{
+            randomCell=board.getCell(rand.nextInt(board.getWidth()), rand.nextInt(board.getHeight()));
+        }while(!randomCell.isUsable());
+        this.x=randomCell.getX();
+        this.y=randomCell.getY();
     }
 
     public void move(int dx, int dy){ //metoda zmieniająca pozycję agenta o dany dx i dy i aktualizująca

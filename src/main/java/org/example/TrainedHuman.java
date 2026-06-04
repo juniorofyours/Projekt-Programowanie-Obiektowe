@@ -18,7 +18,7 @@ public class TrainedHuman extends Human{
     final float addToThrowProb=0.5f;
 
     /*konstruktor*/
-    public TrainedHuman(Simulation simulation, Board board, int x, int y, float transformationProb, float addProb, float rectruitmentProb, float throwProb, int energyBoost, int energyLoss) {
+    public TrainedHuman(Simulation simulation, Board board, int x, int y, float transformationProb, float addProb, float rectruitmentProb, float throwProb,int garlicStockMax, int energyBoost, int energyLoss) {
         super(simulation, board, x, y, transformationProb, addProb, energyBoost, energyLoss); //super() wywyoluje konsturktor
                                          // klasy nadrzednej, wiec zmienne np energyMax lub np stepsToReset sa takie same (1000 i 0)
         this.rectruitmentProb=rectruitmentProb;
@@ -27,8 +27,8 @@ public class TrainedHuman extends Human{
         //wartosci poczatkowe
         this.lastWeakeningStep=0;
         this.weakend=false;
-        this.garlicStock=3;
-        this.garlicStockMax=3; //np.
+        this.garlicStockMax=garlicStockMax; //np.
+        this.garlicStock=garlicStockMax;
         this.trained=true;
 
     }
@@ -82,7 +82,7 @@ public class TrainedHuman extends Human{
     private void tryRecruit(Human human) {
             if(!human.isTrained() && (rand.nextFloat(rangeOfProbabilityOfRecruitment) < this.rectruitmentProb)) {
                 //throwProb i recruitmentProb = 0 dla nowej wyszkolonej osoby:
-                Agent newTrainedHuman = new TrainedHuman(this.simulation, this.board, this.position.getX(), this.position.getY(), human.transformationProb, human.addProb, 0, 0, human.energyBoost, human.vampEnergyLoss);
+                Agent newTrainedHuman = new TrainedHuman(this.simulation, this.board, this.position.getX(), this.position.getY(), human.transformationProb, human.addProb, 0, 0,this.garlicStockMax, human.energyBoost, human.vampEnergyLoss);
 
                     simulation.replaceAgent(human, newTrainedHuman);
 

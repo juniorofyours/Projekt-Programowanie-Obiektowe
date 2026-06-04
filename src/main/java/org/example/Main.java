@@ -1,10 +1,12 @@
 package org.example;
 
-public class Main {
-    static void main() {
+import javafx.application.Application;
 
-        Simulation simulation=new Simulation(400, 400);
-        simulation.init();
-        for(int i=0;i<20;i++) simulation.step();
+public class Main {
+    public static void main(String[] args) {
+//        Application.launch(SimulationGUI.class, args);
+        SimulationGUI gui=new SimulationGUI();
+        gui.create();
+
     }
 }

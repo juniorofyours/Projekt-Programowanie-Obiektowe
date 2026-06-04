@@ -66,6 +66,15 @@ public class Cell {
         return garlicContainerCell;
     }
 
+    public Object getFirstObject(){
+        if(agents.size()!=0) return agents.get(0);
+        if(garlics.size()!=0) return garlics.get(0);
+        if(garlicContainerCell!=null) {
+            return garlicContainerCell;
+        }
+        return null;
+    }
+
     public int getX(){
         return x;
     }

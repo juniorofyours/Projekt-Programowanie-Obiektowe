@@ -34,6 +34,10 @@ public abstract class Agent {
         return position.getY();
     }
 
+    public void randomizePosition(){
+        position.randomize();
+    }
+
     public abstract void updateCurrentState(); //metoda, która zostanie zaimplementowana w klasach
 //    poszczególnych agentów aktualizująca ich stan
     public abstract void interact(); //metoda, która zostanie zaimplementowana w klasach

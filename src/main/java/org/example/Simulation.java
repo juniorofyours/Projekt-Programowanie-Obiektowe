@@ -2,19 +2,21 @@ package org.example;
 
 import java.util.ArrayList;
 
-public class Simulation{
+public class Simulation implements Runnable{
+    private SimulationConfig config=SimulationConfig.getInstance();
     private Board board;
     private GarlicContainer container;
     private ArrayList<Agent> agents;
     private ArrayList<Garlic> garlics;
+    private AgentCreator creator;
     private int numSteps;
     private int hour;
-    private Boolean isCycling;
+//    private Boolean isCycling;
     private int sunsetHour;
     private int sunriseHour;
 
-    public Simulation(int width, int height){
-        board=new Board(width, height);
+    public Simulation(){
+//        board=new Board(width, height);
         agents=new ArrayList<>();
         garlics=new ArrayList<>();
         numSteps=0;
@@ -24,28 +26,55 @@ public class Simulation{
         sunsetHour=18;
     }
 
-    public void init(){
+    private void init(){
 //        parametry
-        isCycling=true;
+        int width=config.getWorldConfig().getWidth();
+        int height=config.getWorldConfig().getHeight();
+        board=new Board(width, height);
 
-        int min_x=200;
-        int max_x=300;
+        int container_width=width/5;
+        int container_height=height/5;
+
+        int min_x=width-1-container_width;
+        int max_x=width-1;
         int min_y=0;
-        int max_y=50;
-
-        int energy_boost=1000;
-        int energy_loss=1000;
-
-        float transformation_prob=5f;
-        float add_prob=1f;
-        float recruitment_prob=10f;
-        float throw_prob=10f;
-
+        int max_y=container_height;
         container=new GarlicContainer(min_x, max_x, min_y,max_y);
         board.addGarlicContainer(container);
-        addAgent(new Vampire(this, board, 5, 10, energy_boost, energy_loss));
-        addAgent(new Human(this, board, 5, 10,transformation_prob,add_prob, energy_boost, energy_loss));
-        addAgent(new TrainedHuman(this, board, 5, 10,transformation_prob,add_prob,recruitment_prob, throw_prob, energy_boost, energy_loss));
+
+        creator=new AgentCreator(this, board);
+        creator.createVampires(config.getVampireConfig().getInitialNumber());
+        creator.createPeople(config.getHumanConfig().getInitialNumber());
+        creator.createTrainedPeople(config.getTrainedHumanConfig().getInitialNumber());
+
+        config.getWorldConfig().setInitiated(true);
+
+//        int energy_boost=1000;
+//        int energy_loss=1000;
+//
+//        float transformation_prob=5f;
+//        float add_prob=1f;
+//        float recruitment_prob=10f;
+//        float throw_prob=10f;
+//        addAgent(new Vampire(this, board, 5, 10, energy_boost, energy_loss));
+//        addAgent(new Human(this, board, 5, 10,transformation_prob,add_prob, energy_boost, energy_loss));
+//        addAgent(new TrainedHuman(this, board, 5, 10,transformation_prob,add_prob,recruitment_prob, throw_prob, energy_boost, energy_loss));
+    }
+
+    @Override
+public void run(){
+        init();
+        while(true){
+            if(!SimulationConfig.getInstance().getWorldConfig().isPaused()){
+                step();
+            }
+
+            try {
+                Thread.sleep(20);
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+            }
+        }
     }
 
     public void addAgent(Agent agent){ //dodaje agenta na planszę i do listy agents w symulacji
@@ -116,7 +145,7 @@ public class Simulation{
     private void updateHour(){ //aktualizuje godzinę symulacji, jeśli występuje tryb dzień-noc.
 //        Tutaj jest założone, że godzina się zmienia zawsze, gdy numer kroku dzieli się przez 50, czyli
 //        co 50 kroków
-        if(isCycling==true) if(numSteps%50==0) {
+        if(config.getWorldConfig().isCycling()==true) if(numSteps%50==0) {
             hour=(hour+1)%24;
         }
     }
@@ -136,7 +165,7 @@ public class Simulation{
         return sunsetHour;
     }
 
-    public void step(){ //metoda oznaczająca jeden krok symulacji i wywołująca wszystkie meotdy
+    public synchronized void step(){ //metoda oznaczająca jeden krok symulacji i wywołująca wszystkie meotdy
 //        iterujące po agentach i zmieniające ich stan, położenie, przeprowadzjące ich interkację, śmerć, ...
         ConsoleColors.printlnBlue("\nKrok: "+numSteps+ ", godzina: "+hour);
         updateAgentStates();
@@ -147,6 +176,39 @@ public class Simulation{
         numSteps++;
         updateHour();
 
+    }
+
+    public synchronized ArrayList<ObjectToRender> getSnapshot(){
+        if(!config.getWorldConfig().isInitiated()) return null;
+        ArrayList<ObjectToRender> listToRender=new ArrayList<>();
+        for(int i=0;i< board.getWidth();i++){
+            for(int j=0;j< board.getHeight();j++){
+                Object obj=board.getCell(i, j).getFirstObject();
+                    if(obj==null) continue;
+                    String type=recognizeType(obj);
+                    listToRender.add(new ObjectToRender(i,j,type));
+            }
+        }
+        return listToRender;
+    }
+
+    public String recognizeType(Object obj){
+        if(obj instanceof Vampire){
+            return "VAMPIRE";
+        }
+        if(obj instanceof TrainedHuman){
+            return "TRAINED_HUMAN";
+        }
+        if(obj instanceof Human){
+            return "HUMAN";
+        }
+        if(obj instanceof Garlic){
+            return "GARLIC";
+        }
+        if(obj instanceof GarlicContainerCell){
+            return "GARLIC_CONTAINER_CELL";
+        }
+        return null;
     }
 
 }

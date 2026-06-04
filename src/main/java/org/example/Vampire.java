@@ -15,13 +15,17 @@ public class Vampire extends Agent{
     }
 
     private void hide(){
+        if(hidden) return;
         hidden=true;
         board.removeFromBoard(this);
+        movement=new WaitingMovingStrategy();
 
     }
     private void showUp(){
+        if(!hidden) return;
         hidden=false;
         board.addToBoard(this);
+        movement=new RandomMovingStrategy();
     }
 
     public Boolean isHidden(){
