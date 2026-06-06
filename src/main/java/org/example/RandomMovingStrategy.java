@@ -5,7 +5,7 @@ import java.util.Random;
 public class RandomMovingStrategy implements MovingStrategy{ //strategia do losowego poruszania się po planszy
 
     @Override
-    public void move(AgentPosition position){
+    public void move(AgentPosition position, Simulation simulation){
         Random rand=new Random();
         boolean success;
         int dx;

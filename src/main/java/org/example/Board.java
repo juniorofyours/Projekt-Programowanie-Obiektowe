@@ -80,11 +80,49 @@ public class Board {
         }
     }
 
-    public Cell getClosestCellContainingGarlicContainer(int x, int y){ //metoda, która zwraca komórkę
+    //dla przesztreni torusowej:
+    public static int getClosestCoordinate(int coord, int min, int max, int sizeOfBoard) {
+        //sprawdzanie dystansu bez zawijania w przestrzeni torusowej
+        int basic = Math.max(min, Math.min(coord, max)); //najblizszy punkt w standardowym ruchu
+        int basicDistance = distanceTorus(coord, basic, sizeOfBoard);
+
+        //sprawdzenie odleglosci przez lewa / dolna krawedz planszy (min):
+        int distanceThroughMin = distanceTorus(coord, min, sizeOfBoard);
+
+        //sprawdzenie odleglosci przez prawa / gorna krawedz planszy (max):
+        int distanceThroughMax = distanceTorus(coord, max, sizeOfBoard);
+
+        int resultCoord=basic;
+        int resultDistance = basicDistance;
+
+        if(distanceThroughMin < resultDistance) {
+            resultCoord = min;
+            resultDistance = distanceThroughMin;
+        }
+        if(distanceThroughMax < resultDistance) {
+            resultCoord = max;
+        }
+
+        return resultCoord;
+    }
+
+    //zwraca liczbe komorek, ktorą należy pokonać, aby droga była jak najmniejsza (uwzględniając charakter torusowy planszy)
+    public static int distanceTorus(int coord1, int coord2, int sizeOfBoard) { //dziala dla jednej osi
+        int distance = Math.abs(coord1-coord2);
+        return Math.min(distance, sizeOfBoard + 1 - distance); //zwraca dystans bliższy (czy droga standardowa, czy zawijajaca jest lepsza)
+    }
+
+    //minX, maxX itd - sa to wspolrzedne rogów kontenera
+    public Cell getClosestCellContainingGarlicContainer(int x, int y, int minX, int maxX, int minY, int maxY){ //metoda, która zwraca komórkę
 //        zawierającą garlicContainerCell, która znajduje się najbliżej współrzędnych x i y. Przydaje się
 //        do wyznaczenia komórki celu, do której zbliża się trainedHuman, gdy chce iść do kontenera po czosnek
-        Cell closestCell=null;
-        Double maxDistance=Double.POSITIVE_INFINITY;
+        //Cell closestCell=null;
+
+        int nearestX = getClosestCoordinate(x, minX, maxX, this.getWidth());
+        int nearestY = getClosestCoordinate(y, minY, maxY, this.getHeight());
+
+
+        /*Double maxDistance=Double.POSITIVE_INFINITY;
         Double distance;
         for(int i=0; i<width;i++){
             for(int j=0; j<height;j++){
@@ -96,8 +134,8 @@ public class Board {
                     }
                 }
             }
-        }
-        return closestCell;
+        }*/
+        return grid[nearestX][nearestY];
     }
 
     public int getWidth(){

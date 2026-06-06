@@ -11,6 +11,13 @@ public class Human extends Agent{
     protected boolean safe;
     protected boolean trained;
 
+    /*Parametry*/
+    final float BASIC_PROB_OF_GIVING_BIRTH=0.01f;
+    final float BASIC_PROB_OF_TRANSFORMING=50.0f;
+    final int MAX_NUMB_OF_HUMANBEINGS = 200;
+    final int MAX_NUMB_OF_VAMPIRES = 200;
+    final float RANGE = 100;
+
     /*DODAC w przyszlosci do klasy z parametrami:*/
     final float rangeOfProbabilityOfAdd = 10.0f; //albo np. = addProb+1 //parametr zakresu z jakim prawdop. osoba moze rodzic
     final float rangeOfProbabilityToTransform = 10.0f; //zakres prawdop. z jakim osoba moze sie zamienic w wampira
@@ -60,40 +67,23 @@ public class Human extends Agent{
     }
 
     /*pozostale metody*/
-    //metoda z zadanym prawdopodbienstwem (addProb: float) dodaje czlowieka do planszy
-    //prawdopodobienstwo dziala na zasadzie, czy losuje sie liczba z jakiegos zakresu (rangeOfProbabilityOfAdd) i porownuje sie do
-    //zmiennej (addProb) danego obiektu, która się zwiększa z każdym krokiem (+=addToAddProb)
-    public void tryAdd(){
-        //czy osoba pojawi sie (czy zmienna losowa jest wieksza niz zadana wartosc)
-//        Dałem 0 zamiast addProb, bo addProb robiło się nieprzewidywalne i szybko rosło i praktycznie
-//        co krok rodziło się coraz więcej ludzi zmierzając do nieskonczonosci (co mi zawiesiło komputer)
-        if (rand.nextFloat(rangeOfProbabilityOfAdd) < 0) {
 
-            //losowanie komórki, która jest dostępna (isUsable)      //##dla przyszlych korekt: zostawiamy tak czy bez losowania?
-//           skomentowałem twój kod z losowaniem miejsca dla nowej osoby, bo myślę, że randomowe pojawianie się nowej osoby
-//            znikąd w losowym miejscu by nie wyglądało najlpiej + nielosowanie miejsca ułatwia znacząco kod. Można później
-//            przywrócić losowanie miejsca, ale wtedy trzeba to zrobić z blokiem try catch
-            boolean success;
-//            int randX, randY;
+    protected boolean randomizer(float PROB, long NUMBER, int MAX) {
+        float actualProb = PROB * (1.0f - NUMBER/MAX);
+
+        if(actualProb<=0) return false;
+        if(rand.nextFloat(RANGE) < actualProb) return true;
+        return false;
+    }
+
+
+    //rodzi nową osobę:
+    public void tryAdd(){
+        if (randomizer(BASIC_PROB_OF_GIVING_BIRTH, simulation.getNumberOfHumanBeings(), MAX_NUMB_OF_HUMANBEINGS)) {
             simulation.addAgent(new Human(this.simulation, this.board, this.getX(), this.getY(),
                     this.transformationProb, this.addProb, this.energyBoost, this.energyLoss));
-
-//            do{
-//                try{
-//                    randX=rand.nextInt(this.board.getWidth()); //od 0 do boardWidth
-//                    randY=rand.nextInt(this.board.getHeight()); // od 0 do boardHeight
-//                    simulation.addAgent(new Human(this.simulation, this.board, randX, randY,
-//                            this.transformationProb, this.addProb, this.energyBoost, this.energyLoss));
-//                    success=true;
-//                }catch(UnusableCellException error){
-//                    success=false;
-//                }
-//            }while(!success);
-            this.addProb=0;
             ConsoleColors.printlnGreen("<<Dodanie nowego czlowieka>>");
-//
         }
-        this.addProb+=addToAddProb;
     }
 
     public void eat(Garlic garlic){
@@ -119,13 +109,15 @@ public class Human extends Agent{
     public boolean isSafe(){
         return this.safe;
     }
-    public boolean isTrained(){return trained;}
+    public boolean isTrained(){
+        return trained;
+    }
 
     /*nadpisane metody:*/
     @Override
     public boolean tryRemove() { //metoda uswająca agenta, jesli ma energię=0, albo kiedy Human jest wyszkolony przez TrainedHuman
         if (energyLevel == 0) {
-            if (rand.nextFloat(rangeOfProbabilityToTransform) < this.transformationProb) {
+            if (randomizer(BASIC_PROB_OF_TRANSFORMING, this.simulation.getNumberOfVampires(), MAX_NUMB_OF_VAMPIRES)) {
                 Agent newVampire = new Vampire(this.simulation, this.board, this.position.getX(), this.position.getY(), vampEnergyBoost, vampEnergyLoss);
                 this.simulation.replaceAgent(this, newVampire);
                 ConsoleColors.printlnRed("<<Zamiana czlowieka w wampira>>");

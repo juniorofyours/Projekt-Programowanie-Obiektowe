@@ -211,4 +211,25 @@ public void run(){
         return null;
     }
 
+    //zwraca liczbe osob
+    public long getNumberOfHumanBeings(){
+        long number = agents.stream().filter(agent -> agent instanceof Human).count();
+        return number;
+    }
+
+    //zwraca liczbe wampirów
+    public long getNumberOfVampires(){
+        long number = agents.stream().filter(agent -> agent instanceof Vampire).count();
+        return number;
+    }
+
+    public int[] getCoordinatesOfContainer() {
+        int[] coords = new int[4];
+        coords[0] = container.getX_min();
+        coords[1] = container.getX_max();
+        coords[2] = container.getY_min();
+        coords[3] = container.getY_max();
+
+        return coords;
+    }
 }

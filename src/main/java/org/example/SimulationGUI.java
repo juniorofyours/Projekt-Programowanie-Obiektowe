@@ -69,6 +69,7 @@ public class SimulationGUI extends Application {
         launch();
     }
 
+    //scena symulacji:
     private void render(ArrayList<ObjectToRender> listToRender){
         if(listToRender==null) return;
         GraphicsContext gc = canvas.getGraphicsContext2D();

@@ -44,7 +44,7 @@ public abstract class Agent {
 //    poszczególnych agentów przeprowadzająca ich interkacje z otoczeniem
 
     public void move(){ //metoda wywołująca metodę move dla konkretnej strategii poruszania się
-        movement.move(position);
+        movement.move(position, simulation);
         System.out.println("-Krok agenta nr."+id+" ("+this.getClass().getSimpleName()+") "+"[ "+position.getX()+" "+position.getY()+" ]");
     }
     public boolean tryRemove(){ //metoda suuswająca agenta, jesli ma energię=0, powinna być nadpisana dla
