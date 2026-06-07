@@ -31,49 +31,29 @@ public class CollectMovingStrategy implements MovingStrategy{ //strategia porusz
 
         int x = position.getX(), y = position.getY();
 
-        int width = board.getWidth() + 1;
-        int height = board.getHeight() + 1;
-        int dx = vectorTorus(x, targetCell.getX(), width);
-        int dy = vectorTorus(y, targetCell.getY(), height);
+        int width = board.getWidth();
+        int height = board.getHeight();
+        int dx = Integer.signum(vectorTorus(x, targetCell.getX(), width));
+        int dy = Integer.signum(vectorTorus(y, targetCell.getY(), height));
 
         if(dx <= 1 && dx >= -1) {
             if(dy <= 1 && dy >= -1) {
                 return;
             }
             else {
-                int nextY = y + Integer.signum(dy);
-                nextY = (nextY + height) % height;
-                position.move(x, nextY);
+                position.move(0, dy);
                 return;
             }
         }
         else {
             if (dy <= 1 && dy >= -1) {
-                int nextX = x + Integer.signum(dx);
-                nextX = (nextX + width) % width;
-                position.move(nextX, y);
+                position.move(dx, 0);
                 return;
             }
             else {
-                int nextX = x + Integer.signum(dx);
-                nextX = (nextX + width) % width;
-                int nextY = y + Integer.signum(dy);
-                nextY = (nextY + height) % height;
-                position.move(nextX, nextY);
+                position.move(dx, dy);
             }
         }
-        /*
-        int x_diff=targetCell.getX()-position.getX();
-        int y_diff=targetCell.getY()-position.getY();
-        if(x_diff<=1&&y_diff<=1){ //jeśli agent znajduje się centralnie przy najbliższym garlicContainerCell,
-//            to nic się nie dzieje, bo agent już nie musi się poruszać p oplanszy
-            return;
-        }
-
-//        agent jest przesuwany w kierunku kontenra (najbliższego garlicContainerCell)
-        int dx=(int)Math.signum(x_diff);
-        int dy=(int)Math.signum(y_diff);
-        position.move(dx,dy);*/
 
     }
 }

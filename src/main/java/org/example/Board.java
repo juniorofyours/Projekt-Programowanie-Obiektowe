@@ -109,32 +109,15 @@ public class Board {
     //zwraca liczbe komorek, ktorą należy pokonać, aby droga była jak najmniejsza (uwzględniając charakter torusowy planszy)
     public static int distanceTorus(int coord1, int coord2, int sizeOfBoard) { //dziala dla jednej osi
         int distance = Math.abs(coord1-coord2);
-        return Math.min(distance, sizeOfBoard + 1 - distance); //zwraca dystans bliższy (czy droga standardowa, czy zawijajaca jest lepsza)
+        return Math.min(distance, sizeOfBoard - distance); //zwraca dystans bliższy (czy droga standardowa, czy zawijajaca jest lepsza)
     }
 
     //minX, maxX itd - sa to wspolrzedne rogów kontenera
-    public Cell getClosestCellContainingGarlicContainer(int x, int y, int minX, int maxX, int minY, int maxY){ //metoda, która zwraca komórkę
-//        zawierającą garlicContainerCell, która znajduje się najbliżej współrzędnych x i y. Przydaje się
-//        do wyznaczenia komórki celu, do której zbliża się trainedHuman, gdy chce iść do kontenera po czosnek
-        //Cell closestCell=null;
+    public Cell getClosestCellContainingGarlicContainer(int x, int y, int minX, int maxX, int minY, int maxY){
 
         int nearestX = getClosestCoordinate(x, minX, maxX, this.getWidth());
         int nearestY = getClosestCoordinate(y, minY, maxY, this.getHeight());
 
-
-        /*Double maxDistance=Double.POSITIVE_INFINITY;
-        Double distance;
-        for(int i=0; i<width;i++){
-            for(int j=0; j<height;j++){
-                if(grid[i][j].getGarlicContainerCell()!=null){
-                    distance=Math.pow(Math.pow(i-x, 2)+Math.pow(j-y, 2), 2);
-                    if(distance<maxDistance) {
-                        closestCell = grid[i][j];
-                        maxDistance=distance;
-                    }
-                }
-            }
-        }*/
         return grid[nearestX][nearestY];
     }
 

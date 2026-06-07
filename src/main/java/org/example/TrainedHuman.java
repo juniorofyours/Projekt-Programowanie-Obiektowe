@@ -2,6 +2,9 @@ package org.example;
 
 import java.util.List;
 
+//importowanie metody:
+import static org.example.CollectMovingStrategy.vectorTorus;
+
 public class TrainedHuman extends Human{
     private float rectruitmentProb;
     private float throwProb;
@@ -57,6 +60,13 @@ public class TrainedHuman extends Human{
         else {
             this.weakend=true;
         }
+
+        if(this.garlicStock<=0) {
+            this.movement = collectMoving;
+        }
+        else {
+            this.movement = randomMoving;
+        }
     }
 
     @Override
@@ -65,25 +75,30 @@ public class TrainedHuman extends Human{
         if(!this.weakend) {
             //zjedzenie czosnku
             List<Garlic> garlics=cell.getGarlics();
-            for(int i=0; i<garlics.size();){
-                this.eat(garlics.get(i));
+            while(!garlics.isEmpty() ){
+                this.eat(garlics.get(0));
             }
             //rozrzucanie czosnku
             if(this.garlicStock>0) {
                 this.tryThrow();
             }
         }
-        if(garlicStock<=0) {
+        if(movement == collectMoving) {
             int[] targetCoords = simulation.getCoordinatesOfContainer();
             Cell closestGarlicContainerCell = board.getClosestCellContainingGarlicContainer(position.getX(), position.getY(), targetCoords[0],  targetCoords[1],  targetCoords[2],  targetCoords[3]);
-            if((Math.abs(position.getX() - closestGarlicContainerCell.getX())%(board.getWidth()) <=1 ) && (Math.abs(position.getY() - closestGarlicContainerCell.getY())%(board.getHeight()) <=1)) {
+
+            int width = board.getWidth();
+            int height = board.getHeight();
+
+            if((Math.abs(position.getX() - closestGarlicContainerCell.getX()) % (board.getWidth()) <= 1) && (Math.abs(position.getY() - closestGarlicContainerCell.getY()) % (board.getHeight()) <= 1)) {
                 this.collectGarlic();
-                this.movement = randomMoving;
             }
-            else {
-                this.movement = collectMoving;
-            }
+            /*if((vectorTorus(position.getX(), closestGarlicContainerCell.getX(), board.getWidth()) <=1) && (vectorTorus(position.getY(), closestGarlicContainerCell.getY(), board.getHeight()) <=1)) {
+                this.collectGarlic();
+
+            }*/
         }
+
         //rekrutowanie osob
         for(Agent agent : cell.getAgents()){
             if(agent instanceof Human){
