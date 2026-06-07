@@ -53,7 +53,7 @@ public class SimulationConfig {
     public static class TrainedHumanConfig{
         private volatile int initialNumber=20;
         private volatile float recruitmentProb=5f;
-        private volatile float throwProb=1f;
+        private volatile float throwProb=0.1f;
         private volatile int garlicStockMax=3;
     }
 

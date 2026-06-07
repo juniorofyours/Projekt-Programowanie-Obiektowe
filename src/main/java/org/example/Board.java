@@ -101,6 +101,7 @@ public class Board {
         }
         if(distanceThroughMax < resultDistance) {
             resultCoord = max;
+
         }
 
         return resultCoord;

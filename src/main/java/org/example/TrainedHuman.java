@@ -78,6 +78,7 @@ public class TrainedHuman extends Human{
             while(!garlics.isEmpty() ){
                 this.eat(garlics.get(0));
             }
+            cell.getGarlics().clear();
             //rozrzucanie czosnku
             if(this.garlicStock>0) {
                 this.tryThrow();
@@ -89,14 +90,9 @@ public class TrainedHuman extends Human{
 
             int width = board.getWidth();
             int height = board.getHeight();
-
-            if((Math.abs(position.getX() - closestGarlicContainerCell.getX()) % (board.getWidth()) <= 1) && (Math.abs(position.getY() - closestGarlicContainerCell.getY()) % (board.getHeight()) <= 1)) {
+            if((Math.abs(vectorTorus(position.getX(), closestGarlicContainerCell.getX(), board.getWidth())) <=1) && (Math.abs(vectorTorus(position.getY(), closestGarlicContainerCell.getY(), board.getHeight())) <=1)) {
                 this.collectGarlic();
             }
-            /*if((vectorTorus(position.getX(), closestGarlicContainerCell.getX(), board.getWidth()) <=1) && (vectorTorus(position.getY(), closestGarlicContainerCell.getY(), board.getHeight()) <=1)) {
-                this.collectGarlic();
-
-            }*/
         }
 
         //rekrutowanie osob
@@ -111,7 +107,7 @@ public class TrainedHuman extends Human{
 
     private void tryRecruit(Human human) {
         if(!human.isTrained() && (randomizer(BASIC_PROB_OF_TRAINING, simulation.getNumberOfHumanBeings(), MAX_NUMB_OF_TRAINED_HUMANBEINGS))) {
-            Agent newTrainedHuman = new TrainedHuman(this.simulation, this.board, this.position.getX(), this.position.getY(), human.transformationProb, human.addProb, 0, 0,this.garlicStockMax, human.energyBoost, human.vampEnergyLoss);
+            Agent newTrainedHuman = new TrainedHuman(this.simulation, this.board, this.position.getX(), this.position.getY(), human.transformationProb, human.addProb, this.rectruitmentProb, this.throwProb,this.garlicStockMax, human.energyBoost, human.vampEnergyLoss);
             simulation.replaceAgent(human, newTrainedHuman);
 
             ConsoleColors.printlnYellow("<<Wyrekrutowanie czlowieka>>");

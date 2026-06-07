@@ -27,33 +27,22 @@ public class CollectMovingStrategy implements MovingStrategy{ //strategia porusz
     @Override
     public void move(AgentPosition position, Simulation simulation){
         int[] targetCoords = simulation.getCoordinatesOfContainer(); //0 - minX, 1 - maxX, 2 - minY, 3 - maxY
-        Cell targetCell=board.getClosestCellContainingGarlicContainer(position.getX(), position.getY(), targetCoords[0],  targetCoords[1],  targetCoords[2],  targetCoords[3]);
-
         int x = position.getX(), y = position.getY();
+        Cell targetCell=board.getClosestCellContainingGarlicContainer(x, y, targetCoords[0],  targetCoords[1],  targetCoords[2],  targetCoords[3]);
+
+
 
         int width = board.getWidth();
         int height = board.getHeight();
-        int dx = Integer.signum(vectorTorus(x, targetCell.getX(), width));
-        int dy = Integer.signum(vectorTorus(y, targetCell.getY(), height));
+        int dx = vectorTorus(x, targetCell.getX(), width);
+        int dy = vectorTorus(y, targetCell.getY(), height);
 
-        if(dx <= 1 && dx >= -1) {
-            if(dy <= 1 && dy >= -1) {
-                return;
-            }
-            else {
-                position.move(0, dy);
-                return;
-            }
+        if(Math.abs(dx)<=1) {
+            dx = 0;
         }
-        else {
-            if (dy <= 1 && dy >= -1) {
-                position.move(dx, 0);
-                return;
-            }
-            else {
-                position.move(dx, dy);
-            }
+        if(Math.abs(dy)<=1) {
+            dy = 0;
         }
-
+        position.move(Integer.signum(dx), Integer.signum(dy));
     }
 }
