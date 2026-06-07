@@ -48,21 +48,10 @@ public class Simulation implements Runnable{
         creator.createTrainedPeople(config.getTrainedHumanConfig().getInitialNumber());
 
         config.getWorldConfig().setInitiated(true);
-
-//        int energy_boost=1000;
-//        int energy_loss=1000;
-//
-//        float transformation_prob=5f;
-//        float add_prob=1f;
-//        float recruitment_prob=10f;
-//        float throw_prob=10f;
-//        addAgent(new Vampire(this, board, 5, 10, energy_boost, energy_loss));
-//        addAgent(new Human(this, board, 5, 10,transformation_prob,add_prob, energy_boost, energy_loss));
-//        addAgent(new TrainedHuman(this, board, 5, 10,transformation_prob,add_prob,recruitment_prob, throw_prob, energy_boost, energy_loss));
     }
 
     @Override
-public void run(){
+    public void run(){
         init();
         while(true){
             if(!SimulationConfig.getInstance().getWorldConfig().isPaused()){
@@ -150,6 +139,7 @@ public void run(){
         }
     }
 
+    /*gettery*/
     //zwraca aktualną liczbę kroków symulacji
     public int getCurrentStep(){
         return this.numSteps;
@@ -165,6 +155,29 @@ public void run(){
         return sunsetHour;
     }
 
+    //zwraca liczbe osob
+    public long getNumberOfHumanBeings(){
+        long number = agents.stream().filter(agent -> agent instanceof Human).count();
+        return number;
+    }
+
+    //zwraca liczbe wampirów
+    public long getNumberOfVampires(){
+        long number = agents.stream().filter(agent -> agent instanceof Vampire).count();
+        return number;
+    }
+
+    public int[] getCoordinatesOfContainer() {
+        int[] coords = new int[4];
+        coords[0] = container.getX_min();
+        coords[1] = container.getX_max();
+        coords[2] = container.getY_min();
+        coords[3] = container.getY_max();
+
+        return coords;
+    }
+
+    /*synchronized metody*/
     public synchronized void step(){ //metoda oznaczająca jeden krok symulacji i wywołująca wszystkie meotdy
 //        iterujące po agentach i zmieniające ich stan, położenie, przeprowadzjące ich interkację, śmerć, ...
         ConsoleColors.printlnBlue("\nKrok: "+numSteps+ ", godzina: "+hour);
@@ -192,6 +205,7 @@ public void run(){
         return listToRender;
     }
 
+
     public String recognizeType(Object obj){
         if(obj instanceof Vampire){
             return "VAMPIRE";
@@ -211,25 +225,5 @@ public void run(){
         return null;
     }
 
-    //zwraca liczbe osob
-    public long getNumberOfHumanBeings(){
-        long number = agents.stream().filter(agent -> agent instanceof Human).count();
-        return number;
-    }
 
-    //zwraca liczbe wampirów
-    public long getNumberOfVampires(){
-        long number = agents.stream().filter(agent -> agent instanceof Vampire).count();
-        return number;
-    }
-
-    public int[] getCoordinatesOfContainer() {
-        int[] coords = new int[4];
-        coords[0] = container.getX_min();
-        coords[1] = container.getX_max();
-        coords[2] = container.getY_min();
-        coords[3] = container.getY_max();
-
-        return coords;
-    }
 }

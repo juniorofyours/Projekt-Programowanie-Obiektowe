@@ -16,8 +16,8 @@ public class TrainedHuman extends Human{
     private MovingStrategy randomMoving;
 
     /*Parametry*/
-    final float BASIC_PROB_OF_TRAINING=1.0f;
-    final int MAX_NUMB_OF_TRAINED_HUMANBEINGS = 100;
+    final float BASIC_PROB_OF_TRAINING=50.0f;
+    final int MAX_NUMB_OF_TRAINED_HUMANBEINGS = 200;
 
     /*DODAC w przyszlosci do klasy z parametrami:*/
     final int stepsForGain = 2; //np    //- ile krkokow zajmuje wylaczeni etrybu weakend
