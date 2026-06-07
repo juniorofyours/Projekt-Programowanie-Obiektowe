@@ -134,7 +134,7 @@ public class Simulation implements Runnable{
     private void updateHour(){ //aktualizuje godzinę symulacji, jeśli występuje tryb dzień-noc.
 //        Tutaj jest założone, że godzina się zmienia zawsze, gdy numer kroku dzieli się przez 50, czyli
 //        co 50 kroków
-        if(config.getWorldConfig().isCycling()==true) if(numSteps%50==0) {
+        if(config.getWorldConfig().isCycling()==true && numSteps%50==0) {
             hour=(hour+1)%24;
         }
     }
