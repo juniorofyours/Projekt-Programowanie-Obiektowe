@@ -54,7 +54,7 @@ public class TrainedHuman extends Human{
         super.updateCurrentState();
 
         //czy koniec trybu weakend:
-        if(this.lastWeakeningStep <= this.simulation.getCurrentStep()-stepsForGain) {
+        if(this.lastWeakeningStep <= clock.getStep()-stepsForGain) {
             this.weakend=false;
         }
         else {
@@ -111,6 +111,7 @@ public class TrainedHuman extends Human{
             simulation.replaceAgent(human, newTrainedHuman);
 
             ConsoleColors.printlnYellow("<<Wyrekrutowanie czlowieka>>");
+            stats.addInteraction();
         }
     }
 
@@ -124,8 +125,9 @@ public class TrainedHuman extends Human{
 
             this.garlicStock-=1;
             this.weakend=true;
-            this.lastWeakeningStep=simulation.getCurrentStep();
+            this.lastWeakeningStep=clock.getStep();
             ConsoleColors.printlnYellow("<<Rozrzucenie nowego czosnku>>");
+            stats.addInteraction();
         }
         //this.throwProb+=addToThrowProb;
     }

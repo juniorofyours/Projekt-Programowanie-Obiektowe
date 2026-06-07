@@ -1,0 +1,33 @@
+package org.example;
+
+import lombok.Getter;
+
+@Getter
+public class SimulationClock {
+    private SimulationConfig config=SimulationConfig.getInstance();
+    private volatile int step=0;
+    private volatile float hour=0;
+    private volatile int stepsPerHour=50;
+    private volatile float sunsetHour=18;
+    private volatile float sunriseHour=6;
+    private volatile boolean isNight=true;
+
+    private SimulationClock(){}
+
+    public static class Holder{
+        public static final SimulationClock instance=new SimulationClock();
+    }
+    public static SimulationClock getInstance(){
+        return Holder.instance;
+    }
+
+    public void updateClock(){
+        step++;
+        if(!config.getWorldConfig().isCycling())return;
+
+        hour=(hour+ 1.0f/stepsPerHour)%24;
+        if(hour>=sunriseHour&&hour<sunsetHour) isNight=false;
+        else isNight=true;
+    }
+
+}

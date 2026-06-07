@@ -4,26 +4,19 @@ import java.util.ArrayList;
 
 public class Simulation implements Runnable{
     private SimulationConfig config=SimulationConfig.getInstance();
+    private SimulationStats stats=SimulationStats.getInstance();
+    private SimulationClock clock=SimulationClock.getInstance();
     private Board board;
     private GarlicContainer container;
     private ArrayList<Agent> agents;
     private ArrayList<Garlic> garlics;
     private AgentCreator creator;
-    private int numSteps;
-    private int hour;
-//    private Boolean isCycling;
-    private int sunsetHour;
-    private int sunriseHour;
 
     public Simulation(){
 //        board=new Board(width, height);
         agents=new ArrayList<>();
         garlics=new ArrayList<>();
-        numSteps=0;
-        hour=0;
         container=null;
-        sunriseHour=6;
-        sunsetHour=18;
     }
 
     private void init(){
@@ -69,10 +62,14 @@ public class Simulation implements Runnable{
     public void addAgent(Agent agent){ //dodaje agenta na planszę i do listy agents w symulacji
         board.addToBoard(agent);
         agents.add(agent);
+
+        stats.addObjectOfType(this.recognizeType(agent));
     }
     public void removeAgent(Agent agent){ //usuwa agenta z planszy i z listy agents w symulacji
         board.removeFromBoard(agent);
         agents.remove(agent);
+
+        stats.removeObjectOfType(this.recognizeType(agent));
     }
 
     public void replaceAgent(Agent agentToBeReplaced, Agent newAgent){ //metoda, która zmienia już istniejący element
@@ -88,10 +85,14 @@ public class Simulation implements Runnable{
     public void addGarlic(Garlic garlic){ //dodaje nowy czosnek na planszę i do listy garlics
         board.addGarlicToBoard(garlic);
         garlics.add(garlic);
+
+        stats.addObjectOfType(ObjectType.GARLIC);
     }
     public void removeGarlic(Garlic garlic){ //usuwa czosnek z planszy i z listy garlics
         board.removeGarlicFromBoard(garlic);
         garlics.remove(garlic);
+
+        stats.removeObjectOfType(ObjectType.GARLIC);
     }
 
     private void tryAddNewPeople(){ //iteruje po wszystkich ludziach i wywołuje na nich metodę tryAdd
@@ -131,29 +132,7 @@ public class Simulation implements Runnable{
             if(agents.get(i).tryRemove()) i--;
         }
     }
-    private void updateHour(){ //aktualizuje godzinę symulacji, jeśli występuje tryb dzień-noc.
-//        Tutaj jest założone, że godzina się zmienia zawsze, gdy numer kroku dzieli się przez 50, czyli
-//        co 50 kroków
-        if(config.getWorldConfig().isCycling()==true && numSteps%50==0) {
-            hour=(hour+1)%24;
-        }
-    }
 
-    /*gettery*/
-    //zwraca aktualną liczbę kroków symulacji
-    public int getCurrentStep(){
-        return this.numSteps;
-    }
-    public int getCurrentHour(){
-        return hour;
-    }
-
-    public int getSunriseHour(){
-        return sunriseHour;
-    }
-    public int getSunsetHour(){
-        return sunsetHour;
-    }
 
     //zwraca liczbe osob
     public long getNumberOfHumanBeings(){
@@ -180,14 +159,13 @@ public class Simulation implements Runnable{
     /*synchronized metody*/
     public synchronized void step(){ //metoda oznaczająca jeden krok symulacji i wywołująca wszystkie meotdy
 //        iterujące po agentach i zmieniające ich stan, położenie, przeprowadzjące ich interkację, śmerć, ...
-        ConsoleColors.printlnBlue("\nKrok: "+numSteps+ ", godzina: "+hour);
+        ConsoleColors.printlnBlue("\nKrok: "+clock.getStep()+ ", godzina: "+clock.getHour());
         updateAgentStates();
         tryAddNewPeople();
         moveAgents();
         conductAgentInteractions();
         tryRemoveAgents();
-        numSteps++;
-        updateHour();
+        clock.updateClock();
 
     }
 
@@ -198,29 +176,28 @@ public class Simulation implements Runnable{
             for(int j=0;j< board.getHeight();j++){
                 Object obj=board.getCell(i, j).getFirstObject();
                     if(obj==null) continue;
-                    String type=recognizeType(obj);
+                    ObjectType type=recognizeType(obj);
                     listToRender.add(new ObjectToRender(i,j,type));
             }
         }
         return listToRender;
     }
 
-
-    public String recognizeType(Object obj){
+    public ObjectType recognizeType(Object obj){
         if(obj instanceof Vampire){
-            return "VAMPIRE";
+            return ObjectType.VAMPIRE;
         }
         if(obj instanceof TrainedHuman){
-            return "TRAINED_HUMAN";
+            return ObjectType.TRAINED_HUMAN;
         }
         if(obj instanceof Human){
-            return "HUMAN";
+            return ObjectType.HUMAN;
         }
         if(obj instanceof Garlic){
-            return "GARLIC";
+            return ObjectType.GARLIC;
         }
         if(obj instanceof GarlicContainerCell){
-            return "GARLIC_CONTAINER_CELL";
+            return ObjectType.GARLIC_CONTAINER_CELL;
         }
         return null;
     }

@@ -4,6 +4,7 @@ public class AgentCreator {
     Simulation simulation;
     Board board;
     SimulationConfig config=SimulationConfig.getInstance();
+    SimulationStats stats=SimulationStats.getInstance();
     public AgentCreator(Simulation simulation, Board board){
         this.simulation=simulation;
         this.board=board;

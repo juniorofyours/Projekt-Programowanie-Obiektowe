@@ -7,6 +7,8 @@ public abstract class Agent {
     protected Board board;
     protected AgentPosition position;
     protected MovingStrategy movement;
+    protected SimulationClock clock=SimulationClock.getInstance();
+    protected SimulationStats stats=SimulationStats.getInstance();
     protected int energyLevel;
     protected int energyMax;
     protected int energyBoost;

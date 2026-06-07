@@ -1,0 +1,184 @@
+.root {
+    -fx-background-color:#1e252b;  /*#ececec; Nowoczesne ciemne tło */
+    -fx-font-family: "Segoe UI", Helvetica, Arial, sans-serif;
+}
+
+.control-hbox{
+-fx-background-color:#1e252b;
+-fx-border-width: 1px 0px 0px 0px;
+
+    /* Podajemy kolory: jasny szary na górze, reszta transparentna */
+    -fx-border-color: #ecf0f1 transparent transparent transparent;
+
+    /* Styl obramowania (solid = ciągła linia) */
+    -fx-border-style: solid;
+}
+
+
+/* ==========================================================================
+   LABEL (ETYKIETA)
+   ========================================================================== */
+.label {
+    -fx-text-fill: #ecf0f1; /* Jasny, czytelny kolor tekstu */
+    -fx-font-size: 14px;
+    -fx-font-weight: normal;
+}
+
+.main-label{
+    -fx-font-weight: bold;
+}
+
+/* ==========================================================================
+   BUTTON (PRZYCISK)
+   ========================================================================== */
+.button {
+    -fx-background-color: #3498db; /* Główny niebieski akcent */
+    -fx-text-fill: white;
+    -fx-font-size: 13px;
+    -fx-font-weight: bold;
+    -fx-background-radius: 6px;
+    -fx-padding: 8px 16px;
+    -fx-cursor: hand; /* Zmienia kursor na rączkę po najechaniu */
+}
+
+/* Efekt po najechaniu myszką na przycisk */
+.button:hover {
+    -fx-background-color: #2980b9; /* Ciemniejszy niebieski */
+}
+
+/* Efekt wciśniętego przycisku */
+.button:armed {
+    -fx-background-color: #1f618d;
+}
+
+/* ==========================================================================
+   SLIDER (SUWAK)
+   ========================================================================== */
+/* Główny pasek suwaka */
+.slider .track {
+    -fx-background-color: #2c3e50;
+    -fx-background-radius: 4px;
+    -fx-pref-height: 6px;
+}
+
+/* Pasek postępu (część wypełniona) */
+.slider .colored-track {
+    -fx-background-color: #3498db;
+    -fx-background-radius: 4px;
+}
+
+/* Okrągły uchwyt do przesuwania */
+.slider .thumb {
+    -fx-background-color: #ffffff;
+    -fx-background-radius: 10px;
+    -fx-pref-width: 18px;
+    -fx-pref-height: 18px;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.3), 4, 0, 0, 2);
+}
+
+.slider .thumb:hover {
+    -fx-background-color: #ecf0f1;
+    -fx-scale-x: 1.1; /* Delikatne powiększenie po najechaniu */
+    -fx-scale-y: 1.1;
+}
+
+/* ==========================================================================
+   SPINNER (POLE NUMERYCZNE Z STRZAŁKAMI)
+   ========================================================================== */
+.spinner {
+    -fx-background-color: #2c3e50;
+    -fx-background-radius: 6px;
+    -fx-padding: 2px;
+}
+
+/* Pole tekstowe wewnątrz Spinnera */
+.spinner .text-field {
+    -fx-background-color: #1e252b;
+    -fx-background-radius: 4px 0 0 4px; /* Zaokrąglenie tylko z lewej strony */
+    -fx-text-fill: #ecf0f1;
+    -fx-font-size: 13px;
+    -fx-padding: 6px;
+}
+
+/* Przyciski strzałek */
+.spinner .increment-arrow-button,
+.spinner .decrement-arrow-button {
+    -fx-background-color: #2c3e50;
+    -fx-background-radius: 0 4px 4px 0;
+    -fx-cursor: hand;
+}
+
+.spinner .increment-arrow-button:hover,
+.spinner .decrement-arrow-button:hover {
+    -fx-background-color: #34495e;
+}
+
+/* Same strzałki (kształty wewnątrz przycisków) */
+.spinner .increment-arrow-button .increment-arrow,
+.spinner .decrement-arrow-button .decrement-arrow {
+    -fx-background-color: #3498db; /* Kolor strzałek */
+}
+
+.toggle-button {
+    /* Stan domyślny (wyłączony) - spójny z naszym ciemniejszym tłem */
+    -fx-background-color: #2c3e50;
+    -fx-text-fill: #b2bfc6; /* Lekko zgaszony tekst */
+    -fx-font-size: 13px;
+    -fx-font-weight: bold;
+    -fx-background-radius: 6px;
+    -fx-padding: 8px 16px;
+    -fx-cursor: hand;
+    -fx-border-color: transparent;
+    -fx-border-width: 1px;
+}
+
+/* Efekt po najechaniu myszką (gdy jest wyłączony) */
+.toggle-button:hover {
+    -fx-background-color: #34495e;
+    -fx-text-fill: #ecf0f1;
+}
+
+/* STAN WŁĄCZONY (Wybrany / Selected) */
+.toggle-button:selected {
+    /* Przejmuje nasz główny niebieski akcent */
+    -fx-background-color: #3498db;
+    -fx-text-fill: white;
+    /* Delikatny trik: jasna górna krawędź, o którą pytałeś wcześniej,
+       świetnie podkreśli, że przycisk "świeci" */
+    -fx-border-color: #5dade2 transparent transparent transparent;
+    -fx-border-width: 2px 0px 0px 0px;
+    -fx-border-style: solid;
+}
+
+/* Efekt po najechaniu myszką na JUŻ WŁĄCZONY przycisk */
+.toggle-button:selected:hover {
+    -fx-background-color: #2980b9;
+}
+
+/* Gdy przycisk jest zablokowany (disabled) */
+.toggle-button:disabled {
+    -fx-opacity: 0.4;
+    -fx-cursor: default;
+}
+
+.canvas-holder {
+    -fx-background-color: #151a1e; /* Jeszcze ciemniejszy odcień szarości dla kontrastu */
+
+    /* Zaokrąglamy rogi, żeby pasowały do Buttonów i Spinnerów */
+    -fx-background-radius: 8px;
+    -fx-border-radius: 8px;
+
+    /* Ciemna, delikatna ramka wokół obszaru rysowania */
+    -fx-border-color: #2c3e50;
+    -fx-border-width: 1px;
+    -fx-border-style: solid;
+
+    /* Subtelny cień (efekt głębi), dzięki czemu obszar roboczy "wchodzi w głąb" ekranu */
+    -fx-effect: innershadow(three-pass-box, rgba(0, 0, 0, 0.5), 10, 0, 0, 0);
+}
+
+/* Efekt, gdy najedziesz myszką nad obszar Canvas – ramka delikatnie się rozświetla
+   na nasz główny niebieski kolor akcentowy */
+.canvas-holder:hover {
+    -fx-border-color: #3498db;
+}

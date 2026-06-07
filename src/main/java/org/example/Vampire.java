@@ -10,8 +10,8 @@ public class Vampire extends Agent{
 
     }
     public void updateCurrentState(){
-        if(simulation.getCurrentHour()==simulation.getSunriseHour()) hide();
-        else if(simulation.getCurrentHour()==simulation.getSunsetHour()) showUp();
+        if(!clock.isNight()) hide();
+        else showUp();
     }
 
     private void hide(){
@@ -51,10 +51,12 @@ public class Vampire extends Agent{
         boostEnergy(energyBoost);
         human.loseEnergy(human.getEnergyLoss());
         ConsoleColors.printlnYellow("<<Atak wampira na czlowieka>>");
+        stats.addInteraction();
     }
     private void getAttacked(Garlic garlic){
         simulation.removeGarlic(garlic);
         loseEnergy(energyLoss);
         ConsoleColors.printlnYellow("<<Zaatakowanie wampira przez czosnek>>");
+        stats.addInteraction();
     }
 }

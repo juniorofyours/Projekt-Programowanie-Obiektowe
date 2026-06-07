@@ -98,11 +98,12 @@ public class Human extends Agent{
         if(this.stepsToReset<=0) {
             this.safe=true;
             //ustawienie kroku, kiedy byl ostatnio wziety czosnek
-            this.lastGarlicStep = simulation.getCurrentStep();
+            this.lastGarlicStep = clock.getStep();
             //ustawienie liczby krokow z ochroną
             this.stepsToReset = finalOfReset;
         }
         ConsoleColors.printlnYellow("<<Zjedzenie czosnku przez czlowieka>>");
+        stats.addInteraction();
     }
 
 
