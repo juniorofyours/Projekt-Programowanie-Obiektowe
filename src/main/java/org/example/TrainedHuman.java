@@ -19,7 +19,6 @@ public class TrainedHuman extends Human{
     final float BASIC_PROB_OF_TRAINING=50.0f;
     final int MAX_NUMB_OF_TRAINED_HUMANBEINGS = 200;
 
-    /*DODAC w przyszlosci do klasy z parametrami:*/
     final int stepsForGain = 2; //np    //- ile krkokow zajmuje wylaczeni etrybu weakend
     final float rangeOfProbabilityOfRecruitment = 10.0f; //zakres prawdop., z jakim osoba moze zostac zrekrutowana
     final float addToRecruitmentProb=0.05f; //dodaje sie do recruitmentProb
@@ -106,12 +105,12 @@ public class TrainedHuman extends Human{
     /*pozostale metody*/
 
     private void tryRecruit(Human human) {
-        if(!human.isTrained() && (randomizer(BASIC_PROB_OF_TRAINING, simulation.getNumberOfHumanBeings(), MAX_NUMB_OF_TRAINED_HUMANBEINGS))) {
+        if(!human.isTrained() && (randomizer(this.rectruitmentProb, simulation.getNumberOfHumanBeings(), MAX_NUMB_OF_TRAINED_HUMANBEINGS))) {
             Agent newTrainedHuman = new TrainedHuman(this.simulation, this.board, this.position.getX(), this.position.getY(), human.transformationProb, human.addProb, this.rectruitmentProb, this.throwProb,this.garlicStockMax, human.energyBoost, human.vampEnergyLoss);
             simulation.replaceAgent(human, newTrainedHuman);
 
             ConsoleColors.printlnYellow("<<Wyrekrutowanie czlowieka>>");
-            stats.addInteraction();
+            stats.addInteractionOfType(InteractionType.RECRUITMENT);
         }
     }
 
@@ -127,7 +126,7 @@ public class TrainedHuman extends Human{
             this.weakend=true;
             this.lastWeakeningStep=clock.getStep();
             ConsoleColors.printlnYellow("<<Rozrzucenie nowego czosnku>>");
-            stats.addInteraction();
+            stats.addInteractionOfType(InteractionType.GARLIC_THROW);
         }
         //this.throwProb+=addToThrowProb;
     }

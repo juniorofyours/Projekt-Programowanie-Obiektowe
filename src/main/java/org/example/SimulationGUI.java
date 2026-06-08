@@ -14,6 +14,7 @@ import javafx.stage.Stage;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.Map;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
@@ -24,14 +25,11 @@ public class SimulationGUI extends Application {
     SimulationClock clock=SimulationClock.getInstance();
     Canvas canvas =new Canvas(300, 300);
     HBox simulationPanel;
-    VBox infoPanel;
+    HBox infoPanel;
     Label stepNumberLabel;
     Label hourNumberLabel;
-    Label interactionsNumberLabel;
-    Label vampireNumberLabel;
-    Label humanNumberLabel;
-    Label trainedHumanNumberLabel;
-    Label garlicNumberLabel;
+    VBox interactionsPanel;
+    VBox objectsPanel;
 
     public SimulationGUI(){}
 
@@ -65,7 +63,7 @@ public class SimulationGUI extends Application {
         simulationPanel.setSpacing(15); // Odstępy między elementami (w pikselach)
         simulationPanel.setPadding(new Insets(15)); // Margines wewnętrzny wokół panelu
         simulationPanel.setAlignment(Pos.CENTER); // Wyśrodkowanie elementów w panelu
-        simulationPanel.setPrefHeight(400);
+        simulationPanel.setPrefHeight(410);
 //        simulationPanel.setStyle("-fx-background-color: #ececec;");
 
         controlPanel.getChildren().addAll(mainPanel, vampirePanel, humanPanel, trainedHumanPanel, startPanel);
@@ -231,18 +229,33 @@ public class SimulationGUI extends Application {
     }
 
     private void updateInfo(){
-        DecimalFormat df=new DecimalFormat("#.##");
+//        DecimalFormat df=new DecimalFormat("#.#");
         stepNumberLabel.setText(String.valueOf(clock.getStep()));
-        hourNumberLabel.setText(String.valueOf(df.format(Math.floor(clock.getHour()))));
-        interactionsNumberLabel.setText(String.valueOf(stats.getInteractionsNumber()));
-        vampireNumberLabel.setText(String.valueOf(stats.getObjectsNumber().get(ObjectType.VAMPIRE)));
-        humanNumberLabel.setText(String.valueOf(stats.getObjectsNumber().get(ObjectType.HUMAN)));
-        trainedHumanNumberLabel.setText(String.valueOf(stats.getObjectsNumber().get(ObjectType.TRAINED_HUMAN)));
-        garlicNumberLabel.setText(String.valueOf(stats.getObjectsNumber().get(ObjectType.GARLIC)));
+        hourNumberLabel.setText(String.valueOf((int)(Math.floor(clock.getHour()))));
+
+        objectsPanel.getChildren().clear();
+        for(Map.Entry<ObjectType, Integer> entry :stats.getObjectsNumber().entrySet()){
+            VBox container=new VBox(5);
+            Label textLabel=new Label(entry.getKey().getDescription());
+            textLabel.getStyleClass().add("main-label");
+            Label numberLabel=new Label(String.valueOf(entry.getValue()));
+            container.getChildren().addAll(textLabel, numberLabel);
+            objectsPanel.getChildren().add(container);
+        }
+
+        interactionsPanel.getChildren().clear();
+        for(Map.Entry<InteractionType, Integer> entry :stats.getInteractionsNumber().entrySet()){
+            VBox container=new VBox(5);
+            Label textLabel=new Label(entry.getKey().getDescription());
+            textLabel.getStyleClass().add("main-label");
+            Label numberLabel=new Label(String.valueOf(entry.getValue()));
+            container.getChildren().addAll(textLabel, numberLabel);
+            interactionsPanel.getChildren().add(container);
+        }
 //        hourNumberLabel.setText(String.valueOf(clock.getStep()));
     }
 
-    private VBox createInfoPanel(){
+    private HBox createInfoPanel(){
         Label stepTextLabel=new Label("Krok");
         stepTextLabel.getStyleClass().add("main-label");
         stepNumberLabel=new Label(String.valueOf(clock.getStep()));
@@ -251,48 +264,35 @@ public class SimulationGUI extends Application {
 
         Label hourTextLabel=new Label("Godzina");
         hourTextLabel.getStyleClass().add("main-label");
-        hourNumberLabel=new Label(String.valueOf(clock.getHour()));
+        hourNumberLabel=new Label(String.valueOf((int)(Math.floor(clock.getHour()))));
         VBox hourPanel=new VBox(5);
         hourPanel.getChildren().addAll(hourTextLabel, hourNumberLabel);
 
-        Label interactionsTextLabel=new Label("Całkowita liczba interakcji");
-        interactionsTextLabel.getStyleClass().add("main-label");
-        interactionsNumberLabel=new Label(String.valueOf(stats.getInteractionsNumber()));
-        VBox interactionsPanel=new VBox(5);
-        interactionsPanel.getChildren().addAll(interactionsTextLabel, interactionsNumberLabel);
+        objectsPanel=new VBox(10);
 
-        Label vampireTextLabel=new Label("Liczba wampirów");
-        vampireTextLabel.getStyleClass().add("main-label");
-        vampireNumberLabel=new Label(String.valueOf(stats.getObjectsNumber().get(ObjectType.VAMPIRE)));
-        VBox vampirePanel=new VBox(5);
-        vampirePanel.getChildren().addAll(vampireTextLabel, vampireNumberLabel);
+        interactionsPanel=new VBox(10);
 
-        Label humanTextLabel=new Label("Liczba zwykłych osób");
-        humanTextLabel.getStyleClass().add("main-label");
-        humanNumberLabel=new Label(String.valueOf(stats.getObjectsNumber().get(ObjectType.HUMAN)));
-        VBox humanPanel=new VBox(5);
-        humanPanel.getChildren().addAll(humanTextLabel, humanNumberLabel);
+        VBox leftSidePanel=new VBox(15);
+        leftSidePanel.getChildren().addAll(stepPanel, hourPanel, objectsPanel);
 
-        Label trainedHumanTextLabel=new Label("Liczba wytrenowych osób");
-        trainedHumanTextLabel.getStyleClass().add("main-label");
-        trainedHumanNumberLabel=new Label(String.valueOf(stats.getObjectsNumber().get(ObjectType.TRAINED_HUMAN)));
-        VBox trainedHumanPanel=new VBox(5);
-        trainedHumanPanel.getChildren().addAll(trainedHumanTextLabel, trainedHumanNumberLabel);
+        HBox infoPanel=new HBox(50);
+        infoPanel.getChildren().addAll(leftSidePanel, interactionsPanel);
+        infoPanel.setPrefWidth(400);
 
-        Label garlicTextLabel=new Label("Liczba czosnku");
-        garlicTextLabel.getStyleClass().add("main-label");
-        garlicNumberLabel=new Label(String.valueOf(stats.getObjectsNumber().get(ObjectType.GARLIC)));
-        VBox garlicPanel=new VBox(5);
-        garlicPanel.getChildren().addAll(garlicTextLabel, garlicNumberLabel);
-
-        VBox infoPanel=new VBox(15);
-        infoPanel.getChildren().addAll(stepPanel, hourPanel, interactionsPanel, vampirePanel, humanPanel, trainedHumanPanel,
-                garlicPanel);
         return infoPanel;
     }
 
+//    private VBox createInfoLabels(Label variableLabel, Supplier<Integer> getter, String labelText){
+//        Label TextLabel=new Label(labelText);
+//        TextLabel.getStyleClass().add("main-label");
+//        variableLabel=new Label(String.valueOf(getter.get()));
+//        VBox stepPanel=new VBox(5);
+//        stepPanel.getChildren().addAll(TextLabel, variableLabel);
+//
+//    }
+
     private VBox createStartPanel(){
-        Button initButton=new Button("Zainicjalizuj symulację");
+        Button initButton=new Button("Stwórz symulację");
         initButton.setOnAction((event)->{
             if(config.getWorldConfig().isInitiated()) return;
             canvas.setWidth(config.getWorldConfig().getWidth());
@@ -318,7 +318,7 @@ public class SimulationGUI extends Application {
         Label label=new Label("Główny panel ustawień");
         label.getStyleClass().add("main-label");
         VBox mode=createNewToggleButtonWithLabel("Dzień-Noc", "Tryb", config.getWorldConfig()::isCycling, config.getWorldConfig()::setCycling);
-        VBox boardWidth=createNewSpinnerWithLabel(150, 200, config.getWorldConfig()::getWidth, config.getWorldConfig()::setWidth,
+        VBox boardWidth=createNewSpinnerWithLabel(150, 300, config.getWorldConfig()::getWidth, config.getWorldConfig()::setWidth,
                 "Szerokość planszy");
         VBox boardHeight=createNewSpinnerWithLabel(150, 200, config.getWorldConfig()::getHeight, config.getWorldConfig()::setHeight,
                 "Wysokość planszy");
@@ -346,7 +346,7 @@ public class SimulationGUI extends Application {
         label.getStyleClass().add("main-label");
         VBox energyBoost=createNewSpinnerWithLabel(0, 1000, config.getHumanConfig()::getEnergyBoost,config.getHumanConfig()::setEnergyBoost, "Pojedynczy boost energii człowieka");
         VBox energyLoss=createNewSpinnerWithLabel(0, 1000, config.getHumanConfig()::getEnergyLoss,config.getHumanConfig()::setEnergyLoss, "Pojedyncza strata energii człowieka");
-        VBox addProb=createNewSliderWithLabel(0, 10, config.getHumanConfig()::getAddProb,config.getHumanConfig()::setAddProb, "Prawdopodobieństwo urodzenia nowego człowieka w jednym kroku");
+        VBox addProb=createNewSliderWithLabel(0, 0.1f, config.getHumanConfig()::getAddProb,config.getHumanConfig()::setAddProb, "Prawdopodobieństwo urodzenia nowego człowieka w jednym kroku");
         VBox transformationProb=createNewSliderWithLabel(0, 10, config.getHumanConfig()::getTransformationProb,config.getHumanConfig()::setTransformationProb, "Prawdopodobieństwo zamiany w wampira");
         VBox panel=new VBox(10);
         panel.getChildren().addAll(label, energyBoost, energyLoss, addProb, transformationProb);
@@ -357,7 +357,7 @@ public class SimulationGUI extends Application {
         label.getStyleClass().add("main-label");
         VBox garlicStockMax=createNewSpinnerWithLabel(0, 20,config.getTrainedHumanConfig()::getGarlicStockMax,config.getTrainedHumanConfig()::setGarlicStockMax, "Maksymalna liczba posiadanego czosnku");
         VBox recruitmentProb=createNewSliderWithLabel(0, 10, config.getTrainedHumanConfig()::getRecruitmentProb,config.getTrainedHumanConfig()::setRecruitmentProb, "Prawdopodobieństwo rekrutacji zwykłego człowieka");
-        VBox throwProb=createNewSliderWithLabel(0, 10, config.getTrainedHumanConfig()::getThrowProb,config.getTrainedHumanConfig()::setThrowProb, "Prawdopodobieństwo rozrzucenia czosnku w jednym kroku");
+        VBox throwProb=createNewSliderWithLabel(0, 1, config.getTrainedHumanConfig()::getThrowProb,config.getTrainedHumanConfig()::setThrowProb, "Prawdopodobieństwo rozrzucenia czosnku w jednym kroku");
         VBox panel=new VBox(10);
         panel.getChildren().addAll(label, garlicStockMax, recruitmentProb, throwProb);
         return panel;

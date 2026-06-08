@@ -52,7 +52,7 @@ public class Simulation implements Runnable{
             }
 
             try {
-                Thread.sleep(20);
+                Thread.sleep(10);
             } catch (InterruptedException e) {
                 Thread.currentThread().interrupt();
             }
@@ -80,6 +80,9 @@ public class Simulation implements Runnable{
         agents.set(index, newAgent);
 
         board.replaceAgentInCell(agentToBeReplaced, newAgent);
+
+        stats.addObjectOfType(this.recognizeType(newAgent));
+        stats.removeObjectOfType(this.recognizeType(agentToBeReplaced));
     }
 
     public void addGarlic(Garlic garlic){ //dodaje nowy czosnek na planszę i do listy garlics

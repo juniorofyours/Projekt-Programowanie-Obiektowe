@@ -18,7 +18,6 @@ public class Human extends Agent{
     final int MAX_NUMB_OF_VAMPIRES = 200;
     final float RANGE = 100;
 
-    /*DODAC w przyszlosci do klasy z parametrami:*/
     final float rangeOfProbabilityOfAdd = 10.0f; //albo np. = addProb+1 //parametr zakresu z jakim prawdop. osoba moze rodzic
     final float rangeOfProbabilityToTransform = 10.0f; //zakres prawdop. z jakim osoba moze sie zamienic w wampira
     final int stepsToGainDefence = 4; //liczba krokow po zjedzeniu czosnku, kiedy po nastepnym zjedzeniu czosnku,
@@ -79,7 +78,7 @@ public class Human extends Agent{
 
     //rodzi nową osobę:
     public void tryAdd(){
-        if (randomizer(BASIC_PROB_OF_GIVING_BIRTH, simulation.getNumberOfHumanBeings(), MAX_NUMB_OF_HUMANBEINGS)) {
+        if (randomizer(this.addProb, simulation.getNumberOfHumanBeings(), MAX_NUMB_OF_HUMANBEINGS)) {
             simulation.addAgent(new Human(this.simulation, this.board, this.getX(), this.getY(),
                     this.transformationProb, this.addProb, this.energyBoost, this.energyLoss));
             ConsoleColors.printlnGreen("<<Dodanie nowego czlowieka>>");
@@ -103,7 +102,7 @@ public class Human extends Agent{
             this.stepsToReset = finalOfReset;
         }
         ConsoleColors.printlnYellow("<<Zjedzenie czosnku przez czlowieka>>");
-        stats.addInteraction();
+        stats.addInteractionOfType(InteractionType.GARLIC_EAT);
     }
 
 
@@ -118,10 +117,11 @@ public class Human extends Agent{
     @Override
     public boolean tryRemove() { //metoda uswająca agenta, jesli ma energię=0, albo kiedy Human jest wyszkolony przez TrainedHuman
         if (energyLevel == 0) {
-            if (randomizer(BASIC_PROB_OF_TRANSFORMING, this.simulation.getNumberOfVampires(), MAX_NUMB_OF_VAMPIRES)) {
+            if (randomizer(this.transformationProb, this.simulation.getNumberOfVampires(), MAX_NUMB_OF_VAMPIRES)) {
                 Agent newVampire = new Vampire(this.simulation, this.board, this.position.getX(), this.position.getY(), vampEnergyBoost, vampEnergyLoss);
                 this.simulation.replaceAgent(this, newVampire);
                 ConsoleColors.printlnRed("<<Zamiana czlowieka w wampira>>");
+                stats.addInteractionOfType(InteractionType.TRANSFORMATION);
                 return false;
             } else {
                 //usuniecie osoby (Human)

@@ -51,12 +51,12 @@ public class Vampire extends Agent{
         boostEnergy(energyBoost);
         human.loseEnergy(human.getEnergyLoss());
         ConsoleColors.printlnYellow("<<Atak wampira na czlowieka>>");
-        stats.addInteraction();
+        stats.addInteractionOfType(InteractionType.ATTACK);
     }
     private void getAttacked(Garlic garlic){
         simulation.removeGarlic(garlic);
         loseEnergy(energyLoss);
         ConsoleColors.printlnYellow("<<Zaatakowanie wampira przez czosnek>>");
-        stats.addInteraction();
+        stats.addInteractionOfType(InteractionType.GARLIC_ATTACK);
     }
 }

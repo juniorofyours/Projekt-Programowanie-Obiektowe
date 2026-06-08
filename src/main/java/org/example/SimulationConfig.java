@@ -23,7 +23,7 @@ public class SimulationConfig {
     @Getter
     @Setter
     public static class WorldConfig{
-        private volatile int width=200;
+        private volatile int width=300;
         private volatile int height=200;
         private volatile boolean paused=true;
         private volatile boolean initiated=false;
@@ -44,7 +44,7 @@ public class SimulationConfig {
         private volatile int initialNumber=20;
         private volatile int energyLoss=500;
         private volatile int energyBoost=500;
-        private volatile float addProb=0f;
+        private volatile float addProb=0.01f;
         private volatile float transformationProb=5f;
     }
 
