@@ -10,22 +10,15 @@ public class Human extends Agent{
     protected int lastGarlicStep;
     protected boolean safe;
     protected boolean trained;
+    SimulationConfig config=SimulationConfig.getInstance(); //do tworzenia wampirow
 
-    /*Parametry*/
-    final float BASIC_PROB_OF_GIVING_BIRTH=0.01f;
-    final float BASIC_PROB_OF_TRANSFORMING=50.0f;
+    /*stałe*/
     final int MAX_NUMB_OF_HUMANBEINGS = 200;
     final int MAX_NUMB_OF_VAMPIRES = 200;
-    final float RANGE = 100;
+    final float RANGE = 100f; //zakres użyty w metodzie randomizer
+    final int FINAL_OF_RESET = 3; //ile krokow zajmuje reset ochrony
 
-    final float rangeOfProbabilityOfAdd = 10.0f; //albo np. = addProb+1 //parametr zakresu z jakim prawdop. osoba moze rodzic
-    final float rangeOfProbabilityToTransform = 10.0f; //zakres prawdop. z jakim osoba moze sie zamienic w wampira
-    final int stepsToGainDefence = 4; //liczba krokow po zjedzeniu czosnku, kiedy po nastepnym zjedzeniu czosnku,
-                                      //można zyskać znowu ochronę
-    final int vampEnergyBoost=1000, vampEnergyLoss = 1000; //parametr z ktorym tworza sie wampiry
-    final int finalOfReset=3; //ile krokow zajmuje reset ochrony
-    final float addToAddProb=0.25f;
-    final float addToTransformProb=0.04f; //dodaje sie z kazdym krokiem do transformationProb
+    //final float addToTransformProb=0.04f; //dodaje sie z kazdym krokiem do transformationProb
 
     /*konstruktor*/
     public Human(Simulation simulation, Board board, int x, int y, float transformationProb, float addProb, int energyBoost, int energyLoss) {
@@ -54,7 +47,7 @@ public class Human extends Agent{
             this.safe=true;
         }
         //zwiekszenie sie szans zamiany sie w wampira:
-        this.transformationProb+=addToTransformProb;
+        //this.transformationProb+=addToTransformProb;
     }
 
     public void interact(){ //metoda: interakcja człowieka z otoczeniem
@@ -67,6 +60,7 @@ public class Human extends Agent{
 
     /*pozostale metody*/
 
+    //losowanie w zależności od liczby danej grupy agentów i maksymalnej liczby możliwej do stworzenia:
     protected boolean randomizer(float PROB, long NUMBER, int MAX) {
         float actualProb = PROB * (1.0f - NUMBER/MAX);
 
@@ -99,13 +93,13 @@ public class Human extends Agent{
             //ustawienie kroku, kiedy byl ostatnio wziety czosnek
             this.lastGarlicStep = clock.getStep();
             //ustawienie liczby krokow z ochroną
-            this.stepsToReset = finalOfReset;
+            this.stepsToReset = FINAL_OF_RESET;
         }
         ConsoleColors.printlnYellow("<<Zjedzenie czosnku przez czlowieka>>");
         stats.addInteractionOfType(InteractionType.GARLIC_EAT);
     }
 
-
+    //gettery:
     public boolean isSafe(){
         return this.safe;
     }
@@ -118,7 +112,7 @@ public class Human extends Agent{
     public boolean tryRemove() { //metoda uswająca agenta, jesli ma energię=0, albo kiedy Human jest wyszkolony przez TrainedHuman
         if (energyLevel == 0) {
             if (randomizer(this.transformationProb, this.simulation.getNumberOfVampires(), MAX_NUMB_OF_VAMPIRES)) {
-                Agent newVampire = new Vampire(this.simulation, this.board, this.position.getX(), this.position.getY(), vampEnergyBoost, vampEnergyLoss);
+                Agent newVampire = new Vampire(this.simulation, this.board, this.position.getX(), this.position.getY(), config.getVampireConfig().getEnergyBoost(),config.getVampireConfig().getEnergyLoss());
                 this.simulation.replaceAgent(this, newVampire);
                 ConsoleColors.printlnRed("<<Zamiana czlowieka w wampira>>");
                 stats.addInteractionOfType(InteractionType.TRANSFORMATION);

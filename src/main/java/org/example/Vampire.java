@@ -4,11 +4,17 @@ import java.util.List;
 
 public class Vampire extends Agent{
     private Boolean hidden;
+    private MovingStrategy waitingForMoving;
+    private MovingStrategy randomMoving;
+
+    /*konstruktor*/
     public Vampire(Simulation simulation, Board board, int x, int y, int energyBoost, int energyLoss){
         super(simulation,board, x, y, energyBoost, energyLoss);
         hidden=false;
-
+        this.randomMoving = this.movement;
+        this.waitingForMoving = new WaitingMovingStrategy();
     }
+
     public void updateCurrentState(){
         if(!clock.isNight()) hide();
         else showUp();
@@ -18,14 +24,14 @@ public class Vampire extends Agent{
         if(hidden) return;
         hidden=true;
         board.removeFromBoard(this);
-        movement=new WaitingMovingStrategy();
+        movement=waitingForMoving;
 
     }
     private void showUp(){
         if(!hidden) return;
         hidden=false;
         board.addToBoard(this);
-        movement=new RandomMovingStrategy();
+        movement=randomMoving;
     }
 
     public Boolean isHidden(){
@@ -53,6 +59,7 @@ public class Vampire extends Agent{
         ConsoleColors.printlnYellow("<<Atak wampira na czlowieka>>");
         stats.addInteractionOfType(InteractionType.ATTACK);
     }
+
     private void getAttacked(Garlic garlic){
         simulation.removeGarlic(garlic);
         loseEnergy(energyLoss);

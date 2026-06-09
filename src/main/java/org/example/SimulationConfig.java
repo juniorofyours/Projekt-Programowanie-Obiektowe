@@ -45,7 +45,7 @@ public class SimulationConfig {
         private volatile int energyLoss=500;
         private volatile int energyBoost=500;
         private volatile float addProb=0.01f;
-        private volatile float transformationProb=5f;
+        private volatile float transformationProb=10f;
     }
 
     @Getter

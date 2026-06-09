@@ -15,15 +15,11 @@ public class TrainedHuman extends Human{
     private MovingStrategy collectMoving;
     private MovingStrategy randomMoving;
 
-    /*Parametry*/
-    final float BASIC_PROB_OF_TRAINING=50.0f;
-    final int MAX_NUMB_OF_TRAINED_HUMANBEINGS = 200;
 
-    final int stepsForGain = 2; //np    //- ile krkokow zajmuje wylaczeni etrybu weakend
-    final float rangeOfProbabilityOfRecruitment = 10.0f; //zakres prawdop., z jakim osoba moze zostac zrekrutowana
-    final float addToRecruitmentProb=0.05f; //dodaje sie do recruitmentProb
-    final float rangeOfProbabilityOfThrow = 50.0f;
-    final float addToThrowProb=0.5f;
+    /*stałe*/
+    final int MAX_NUMB_OF_TRAINED_HUMANBEINGS = 100;
+    final int STEPS_FOR_GAIN = 2; // stała decydująca o tym, jak długo trwa tryb weakening
+    final float RANGE_OF_PROBABILITY_OF_THROW = 50.0f;
 
     /*konstruktor*/
     public TrainedHuman(Simulation simulation, Board board, int x, int y, float transformationProb, float addProb, float rectruitmentProb, float throwProb,int garlicStockMax, int energyBoost, int energyLoss) {
@@ -45,7 +41,7 @@ public class TrainedHuman extends Human{
     /*implementacja metod, ktore klasa TrainedHuman dziedziczy po klasie Human*/
     //tryAdd() nie zmienia sie
     //isSafe() nie zmienia sie
-    //eat() nie zmienia sie (poniewaz zmienna weakend sprawdza sie w metodzie interact)
+    //eat() nie zmienia sie (poniewaz zmienna weakend sprawdza się w metodzie interact)
 
     @Override
     public void updateCurrentState() {
@@ -53,7 +49,7 @@ public class TrainedHuman extends Human{
         super.updateCurrentState();
 
         //czy koniec trybu weakend:
-        if(this.lastWeakeningStep <= clock.getStep()-stepsForGain) {
+        if(this.lastWeakeningStep <= clock.getStep()- STEPS_FOR_GAIN) {
             this.weakend=false;
         }
         else {
@@ -105,8 +101,9 @@ public class TrainedHuman extends Human{
     /*pozostale metody*/
 
     private void tryRecruit(Human human) {
-        if(!human.isTrained() && (randomizer(this.rectruitmentProb, simulation.getNumberOfHumanBeings(), MAX_NUMB_OF_TRAINED_HUMANBEINGS))) {
-            Agent newTrainedHuman = new TrainedHuman(this.simulation, this.board, this.position.getX(), this.position.getY(), human.transformationProb, human.addProb, this.rectruitmentProb, this.throwProb,this.garlicStockMax, human.energyBoost, human.vampEnergyLoss);
+        //losowanie za pomocą metody randomizer:
+        if(!human.isTrained() && (randomizer(this.rectruitmentProb, simulation.getNumberOfTrainedHumanBeings(), MAX_NUMB_OF_TRAINED_HUMANBEINGS))) {
+            Agent newTrainedHuman = new TrainedHuman(this.simulation, this.board, this.position.getX(), this.position.getY(), human.transformationProb, human.addProb, this.rectruitmentProb, this.throwProb,this.garlicStockMax, human.energyBoost, human.energyLoss);
             simulation.replaceAgent(human, newTrainedHuman);
 
             ConsoleColors.printlnYellow("<<Wyrekrutowanie czlowieka>>");
@@ -115,9 +112,9 @@ public class TrainedHuman extends Human{
     }
 
     //metoda: proba rozrzucenia czosnku
-    private void tryThrow() { //##do zmiany: prawdopodbienstwo
-        //warunek weakend i garlickStock!=0 jest sprawdzany wewnatrz interact()
-        if(rand.nextFloat(rangeOfProbabilityOfThrow) < this.throwProb) {
+    private void tryThrow() {
+        //losowanie z zakresu
+        if(rand.nextFloat(RANGE_OF_PROBABILITY_OF_THROW) < this.throwProb) {
 
             Garlic garlic = new Garlic(this.simulation, this.board, this.position.getX(), this.position.getY());
             this.simulation.addGarlic(garlic);

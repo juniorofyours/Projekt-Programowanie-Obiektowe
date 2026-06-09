@@ -143,6 +143,13 @@ public class Simulation implements Runnable{
         return number;
     }
 
+    //zwraca liczbe wyszkolonych osób
+    public long getNumberOfTrainedHumanBeings(){
+        long number = agents.stream().filter(agent -> agent instanceof TrainedHuman).count();
+        return number;
+    }
+
+
     //zwraca liczbe wampirów
     public long getNumberOfVampires(){
         long number = agents.stream().filter(agent -> agent instanceof Vampire).count();

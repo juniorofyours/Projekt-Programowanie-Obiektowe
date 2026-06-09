@@ -347,7 +347,7 @@ public class SimulationGUI extends Application {
         VBox energyBoost=createNewSpinnerWithLabel(0, 1000, config.getHumanConfig()::getEnergyBoost,config.getHumanConfig()::setEnergyBoost, "Pojedynczy boost energii człowieka");
         VBox energyLoss=createNewSpinnerWithLabel(0, 1000, config.getHumanConfig()::getEnergyLoss,config.getHumanConfig()::setEnergyLoss, "Pojedyncza strata energii człowieka");
         VBox addProb=createNewSliderWithLabel(0, 0.1f, config.getHumanConfig()::getAddProb,config.getHumanConfig()::setAddProb, "Prawdopodobieństwo urodzenia nowego człowieka w jednym kroku");
-        VBox transformationProb=createNewSliderWithLabel(0, 10, config.getHumanConfig()::getTransformationProb,config.getHumanConfig()::setTransformationProb, "Prawdopodobieństwo zamiany w wampira");
+        VBox transformationProb=createNewSliderWithLabel(0, 20, config.getHumanConfig()::getTransformationProb,config.getHumanConfig()::setTransformationProb, "Prawdopodobieństwo zamiany w wampira");
         VBox panel=new VBox(10);
         panel.getChildren().addAll(label, energyBoost, energyLoss, addProb, transformationProb);
         return panel;
