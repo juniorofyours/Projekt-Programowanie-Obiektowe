@@ -10,7 +10,7 @@ public class SimulationClock {
     private volatile int stepsPerHour=50;
     private volatile float sunsetHour=18;
     private volatile float sunriseHour=6;
-    private volatile boolean isNight=true;
+    private volatile boolean night=true;
 
     private SimulationClock(){}
 
@@ -26,8 +26,17 @@ public class SimulationClock {
         if(!config.getWorldConfig().isCycling())return;
 
         hour=(hour+ 1.0f/stepsPerHour)%24;
-        if(hour>=sunriseHour&&hour<sunsetHour) isNight=false;
-        else isNight=true;
+        if(hour>=sunriseHour&&hour<sunsetHour) night=false;
+        else night=true;
     }
+    public void setNight(){
+        night=true;
+        hour=sunsetHour;
+    }
+    public void setDay(){
+        night=false;
+        hour=sunriseHour;
+    }
+
 
 }

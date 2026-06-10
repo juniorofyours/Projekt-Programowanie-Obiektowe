@@ -1,13 +1,22 @@
 package org.example;
 
+import lombok.Generated;
+import lombok.Getter;
+import lombok.Setter;
+
 import java.util.ArrayList;
+import java.util.List;
 
 public class Simulation implements Runnable{
     private SimulationConfig config=SimulationConfig.getInstance();
     private SimulationStats stats=SimulationStats.getInstance();
     private SimulationClock clock=SimulationClock.getInstance();
+    @Setter
     private Board board;
+    @Getter
+    @Setter
     private GarlicContainer container;
+    @Getter
     private ArrayList<Agent> agents;
     private ArrayList<Garlic> garlics;
     private AgentCreator creator;
@@ -19,7 +28,7 @@ public class Simulation implements Runnable{
         container=null;
     }
 
-    private void init(){
+    public void init(){
 //        parametry
         int width=config.getWorldConfig().getWidth();
         int height=config.getWorldConfig().getHeight();

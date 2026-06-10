@@ -49,7 +49,7 @@ public abstract class Agent {
         movement.move(position, simulation);
         System.out.println("-Krok agenta nr."+id+" ("+this.getClass().getSimpleName()+") "+"[ "+position.getX()+" "+position.getY()+" ]");
     }
-    public boolean tryRemove(){ //metoda suuswająca agenta, jesli ma energię=0, powinna być nadpisana dla
+    public boolean tryRemove(){ //metoda ususwająca agenta, jesli ma energię=0, powinna być nadpisana dla
 //        ludzi by z danym prawdopodobienstwem zamienic ich w wampiry
         if(energyLevel==0) {
             simulation.removeAgent(this);

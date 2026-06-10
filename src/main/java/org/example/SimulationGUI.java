@@ -6,13 +6,10 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
-import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
-import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 
-import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Map;
 import java.util.function.Consumer;
@@ -24,6 +21,7 @@ public class SimulationGUI extends Application {
     SimulationStats stats=SimulationStats.getInstance();
     SimulationClock clock=SimulationClock.getInstance();
     Canvas canvas =new Canvas(300, 300);
+    CanvasRenderingUtil renderingUtil=new CanvasRenderingUtil(canvas);
     HBox simulationPanel;
     HBox infoPanel;
     Label stepNumberLabel;
@@ -31,7 +29,9 @@ public class SimulationGUI extends Application {
     VBox interactionsPanel;
     VBox objectsPanel;
 
-    public SimulationGUI(){}
+    public void create(){
+        launch();
+    }
 
     @Override
     public void start(Stage stage){
@@ -46,25 +46,18 @@ public class SimulationGUI extends Application {
         javafx.scene.transform.Scale scale = new javafx.scene.transform.Scale(1.9, 1.9, 0, 0);
         canvas.getTransforms().add(scale);
         Pane canvasPane=new Pane(canvas);
-//        canvasPane.getStyleClass().add("canvas-holder");
-//        canvas.widthProperty().bind(canvasPane.widthProperty());
-//        canvas.heightProperty().bind(canvasPane.heightProperty());
-//        canvas.setScaleX(3);
-//        canvas.setScaleY(3);
-//
+
         HBox controlPanel=new HBox();
-        controlPanel.setSpacing(30); // Odstępy między elementami (w pikselach)
-        controlPanel.setPadding(new Insets(15)); // Margines wewnętrzny wokół panelu
-        controlPanel.setAlignment(Pos.CENTER); // Wyśrodkowanie elementów w panelu
+        controlPanel.setSpacing(30);
+        controlPanel.setPadding(new Insets(15));
+        controlPanel.setAlignment(Pos.CENTER);
         controlPanel.getStyleClass().add("control-hbox");
-//    Style("-fx-background-color: #ececec;");
 
         simulationPanel=new HBox();
-        simulationPanel.setSpacing(15); // Odstępy między elementami (w pikselach)
-        simulationPanel.setPadding(new Insets(15)); // Margines wewnętrzny wokół panelu
-        simulationPanel.setAlignment(Pos.CENTER); // Wyśrodkowanie elementów w panelu
+        simulationPanel.setSpacing(15);
+        simulationPanel.setPadding(new Insets(15));
+        simulationPanel.setAlignment(Pos.CENTER);
         simulationPanel.setPrefHeight(410);
-//        simulationPanel.setStyle("-fx-background-color: #ececec;");
 
         controlPanel.getChildren().addAll(mainPanel, vampirePanel, humanPanel, trainedHumanPanel, startPanel);
         Region spacer = new Region();
@@ -86,155 +79,29 @@ public class SimulationGUI extends Application {
             @Override
             public void handle(long now) {
                 ArrayList<ObjectToRender> listToRender=simulation.getSnapshot();
-                render(listToRender);
+                renderingUtil.render(listToRender);
                 updateInfo();
             }
         };
         timer.start();
     }
 
-    public void create(){
-        launch();
-    }
-
-    //scena symulacji:
-    private void render(ArrayList<ObjectToRender> listToRender){
-        if(listToRender==null) return;
-        GraphicsContext gc = canvas.getGraphicsContext2D();
-//        String grassColor=clock.getHour()>= clock.getSunriseHour() &&
-//                clock.getHour()< clock.getSunsetHour() ? "#50af3f":"#24671d";
-        gc.setFill(Color.web("#50af3f"));
-        gc.clearRect(0,0, canvas.getWidth(), canvas.getHeight());
-        gc.fillRect(0, 0, canvas.getWidth(), canvas.getHeight());
-        for(ObjectToRender obj : listToRender){
-            switch (obj.type()){
-                case ObjectType.VAMPIRE->{
-                    drawVampire(gc, obj.x(), obj.y(), "#3f0d73");
-                }
-                case ObjectType.TRAINED_HUMAN->{
-                    drawHuman(gc, obj.x(), obj.y(), "#cd0606");
-                }
-                case ObjectType.HUMAN->{
-                    drawHuman(gc, obj.x(), obj.y(), "#e5ba0f");
-                }
-                case ObjectType.GARLIC->{
-                    drawGarlic(gc, obj.x(), obj.y(), "#bfbab7");
-                }
-                case ObjectType.GARLIC_CONTAINER_CELL->{
-                    gc.save();
-                    gc.setFill(Color.web("#8a442e"));
-                    gc.fillRect(obj.x(), obj.y(), 5,5);
-                    gc.restore();
-                }
-            }
-
-        }
-        if(clock.isNight()){
-            drawShadow(gc);
-        }
-    }
-
-    private void drawVampire(GraphicsContext gc, int x, int y, String hexColor){
-        gc.save();
-        gc.translate(x, y);
-
-        gc.scale(0.1, 0.1);
-        // 3. Konfigurujemy kolor
-        gc.setFill(Color.web(hexColor));
-
-        // 4. Rysujemy wampira (współrzędne z kodu SVG, ale punkt startowy to teraz 0,0)
-        gc.beginPath();
-        gc.appendSVGPath("M 50,15 Q 32,15 32,35 L 20,25 L 28,45 Q 28,65 50,75 Q 72,65 72,45 L 80,25 L 68,35 Q 68,15 50,15 Z M 50,22 Q 58,32 66,36 Q 66,22 50,22 Z M 34,36 Q 42,32 50,22 Q 50,22 34,36 Z M 40,45 A 3,3 0 1,1 46,45 A 3,3 0 1,1 40,45 Z M 54,45 A 3,3 0 1,1 60,45 A 3,3 0 1,1 54,45 Z M 42,56 L 44,56 L 43,61 Z M 58,56 L 56,56 L 57,61 Z M 40,55 Q 50,59 60,55 Q 50,57 40,55 Z");
-        gc.fill();
-
-        // 5. Przywracamy oryginalny układ współrzędnych dla reszty programu
-        gc.restore();
-    }
-
-    public void drawHuman(GraphicsContext gc, int x, int y, String hexColor) {
-        // 1. Zapisujemy stan płótna
-        gc.save();
-
-        // 2. Przesuwamy punkt (0,0) na wybraną pozycję (x, y)
-        gc.translate(x, y);
-
-        // 3. Skalujemy układ współrzędnych
-        gc.scale(0.1, 0.1);
-
-        // 4. Ustawiamy kolor ikony
-        gc.setFill(Color.web(hexColor));
-
-        // 5. Rysujemy geometryczną postać człowieka (Głowa + Tułów/Ramiona)
-        gc.beginPath();
-        // Ścieżka SVG składająca się z koła (głowa) oraz łuków i linii (tułów)
-        gc.appendSVGPath("M 50,40 A 12,12 0 1,1 50,16 A 12,12 0 1,1 50,40 Z " +
-                "M 50,46 C 33,46 20,55 20,72 L 20,84 L 80,84 L 80,72 C 80,55 67,46 50,46 Z");
-        gc.fill();
-
-        // 6. Przywracamy stan płótna dla reszty obiektów
-        gc.restore();
-    }
-    public void drawGarlic(GraphicsContext gc, int x, int y, String hexColor) {
-        // 1. Zapisujemy stan płótna
-        gc.save();
-
-        // 2. Przesuwamy punkt (0,0) na pozycję (x, y)
-        gc.translate(x, y);
-
-        // 3. Skalujemy układ współrzędnych
-        gc.scale(0.07, 0.07);
-
-        // 4. Ustawiamy wybrany kolor
-        gc.setFill(Color.web(hexColor));
-
-        // 5. Rysujemy kształt czosnku z liniami podziału (wycięciami) między ząbkami
-        gc.beginPath();
-        gc.appendSVGPath("M 50,15 " +
-                "Q 48,25 43,28 " +
-                "Q 20,25 20,53 " +
-                "Q 20,85 50,85 " +
-                "Q 80,85 80,53 " +
-                "Q 80,25 57,28 " +
-                "Q 52,25 50,15 Z " +
-
-                // Wycięcie / linia lewego ząbka
-                "M 38,34 Q 38,60 48,83 Q 34,70 34,44 Z " +
-
-                // Wycięcie / linia prawego ząbka
-                "M 62,34 Q 66,70 52,83 Q 62,60 62,44 Z " +
-
-                // Środkowy podział
-                "M 49,27 L 51,27 L 50,84 Z");
-
-        // Używamy reguły evenodd, aby wewnętrzne linie SVG zadziałały jako "wycięcia" w czosnku
-        gc.setFillRule(javafx.scene.shape.FillRule.EVEN_ODD);
-        gc.fill();
-
-        // 6. Przywracamy stan płótna
-        gc.restore();
-    }
-    public void drawShadow(GraphicsContext gc) {
-        // poziomPrzyciemnienia: 0.0 (brak cienia) do 1.0 (całkowita czerń)
-        // 0.5 oznacza 50% przyciemnienia (efekt wieczoru/mroku)
-
-        gc.save(); // Zapisujemy stan
-
-        // Ustawiamy czarny kolor z określoną przezroczystością
-        gc.setFill(Color.color(0, 0, 0, 0.2));
-
-        // Rysujemy prostokąt na całą wielkość canvasu
-        gc.fillRect(0, 0, canvas.getWidth(), canvas.getHeight());
-
-        gc.restore(); // Przywracamy stan
+    private void initSimulation(){
+        if(config.getWorldConfig().isInitiated()) return;
+        canvas.setWidth(config.getWorldConfig().getWidth());
+        canvas.setHeight(config.getWorldConfig().getHeight());
+        Thread simulationThread=new Thread(simulation);
+        simulationThread.setDaemon(true);
+        simulationThread.start();
+        startAnimationLoop();
     }
 
     private void updateInfo(){
-//        DecimalFormat df=new DecimalFormat("#.#");
         stepNumberLabel.setText(String.valueOf(clock.getStep()));
         hourNumberLabel.setText(String.valueOf((int)(Math.floor(clock.getHour()))));
 
         objectsPanel.getChildren().clear();
-        for(Map.Entry<ObjectType, Integer> entry :stats.getObjectsNumber().entrySet()){
+        for(Map.Entry<ObjectType, Integer> entry :stats.getObjectsMap().entrySet()){
             VBox container=new VBox(5);
             Label textLabel=new Label(entry.getKey().getDescription());
             textLabel.getStyleClass().add("main-label");
@@ -244,7 +111,7 @@ public class SimulationGUI extends Application {
         }
 
         interactionsPanel.getChildren().clear();
-        for(Map.Entry<InteractionType, Integer> entry :stats.getInteractionsNumber().entrySet()){
+        for(Map.Entry<InteractionType, Integer> entry :stats.getInteractionsMap().entrySet()){
             VBox container=new VBox(5);
             Label textLabel=new Label(entry.getKey().getDescription());
             textLabel.getStyleClass().add("main-label");
@@ -252,7 +119,6 @@ public class SimulationGUI extends Application {
             container.getChildren().addAll(textLabel, numberLabel);
             interactionsPanel.getChildren().add(container);
         }
-//        hourNumberLabel.setText(String.valueOf(clock.getStep()));
     }
 
     private HBox createInfoPanel(){
@@ -282,27 +148,10 @@ public class SimulationGUI extends Application {
         return infoPanel;
     }
 
-//    private VBox createInfoLabels(Label variableLabel, Supplier<Integer> getter, String labelText){
-//        Label TextLabel=new Label(labelText);
-//        TextLabel.getStyleClass().add("main-label");
-//        variableLabel=new Label(String.valueOf(getter.get()));
-//        VBox stepPanel=new VBox(5);
-//        stepPanel.getChildren().addAll(TextLabel, variableLabel);
-//
-//    }
-
     private VBox createStartPanel(){
         Button initButton=new Button("Stwórz symulację");
         initButton.setOnAction((event)->{
-            if(config.getWorldConfig().isInitiated()) return;
-            canvas.setWidth(config.getWorldConfig().getWidth());
-            canvas.setHeight(config.getWorldConfig().getHeight());
-//            simulationPanel.requestLayout();
-            Thread simulationThread=new Thread(simulation);
-            simulationThread.setDaemon(true);
-            simulationThread.start();
-            startAnimationLoop();
-            System.out.println(config.getHumanConfig().getAddProb());
+            initSimulation();
         });
 
         VBox startButton=createNewToggleButtonWithLabel("Start/Stop","Włącz symulację", config.getWorldConfig()::isPaused,
@@ -393,20 +242,14 @@ public class SimulationGUI extends Application {
     }
     private VBox createNewToggleButtonWithLabel(String buttonText, String labelText,Supplier<Boolean> getter, Consumer<Boolean> setter){
         Label label=new Label(labelText);
-//        ToggleGroup group = new ToggleGroup();
 
         ToggleButton button = new ToggleButton(buttonText);
-//        optionA.setToggleGroup(group);
         button.setSelected(getter.get());
 
-//        ToggleButton optionB = new ToggleButton(optionBText);
-//        optionB.setToggleGroup(group);
 
         button.selectedProperty().addListener((obs,oldVal,newVal)->{
             setter.accept(newVal);
         });
-
-//        HBox modeSelection = new HBox(optionA, optionB);
 
         VBox container=new VBox(5);
         container.getChildren().addAll(label, button);

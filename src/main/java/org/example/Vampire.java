@@ -66,4 +66,9 @@ public class Vampire extends Agent{
         ConsoleColors.printlnYellow("<<Zaatakowanie wampira przez czosnek>>");
         stats.addInteractionOfType(InteractionType.GARLIC_ATTACK);
     }
+
+    public void setHidden(boolean hidden){
+        this.hidden=hidden;
+    }
+
 }

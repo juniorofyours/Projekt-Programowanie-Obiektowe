@@ -10,6 +10,7 @@ public class RandomMovingStrategy implements MovingStrategy{ //strategia do loso
         boolean success;
         int dx;
         int dy;
+        int i=0;
         do{
             try { //tutaj występuje blok try catch łapiący błąd stworzonego w
 //                pliku Cell.java typu UnusableCellException, czyli jeśli agent nie może przejść do danej komórki
@@ -19,6 +20,8 @@ public class RandomMovingStrategy implements MovingStrategy{ //strategia do loso
                 position.move(dx,dy);
                 success=true;
             }catch(UnusableCellException e){
+                i++;
+                if(i==10) break;
                 success=false;
             }
         }while(!success);
