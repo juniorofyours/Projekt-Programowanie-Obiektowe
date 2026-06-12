@@ -1,5 +1,7 @@
 package org.example;
 
+import lombok.Getter;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -11,13 +13,14 @@ class UnusableCellException extends RuntimeException{ //nowy typ błędu, który
     }
 }
 
+@Getter
 public class Cell {
-    int x;
-    int y;
-    List<Agent> agents;
-    List<Garlic> garlics;
-    Boolean usable;
-    GarlicContainerCell garlicContainerCell;
+    private final int x;
+    private final int y;
+    private final List<Agent> agents;
+    private final List<Garlic> garlics;
+    private boolean usable;
+    private GarlicContainerCell garlicContainerCell;
 
     public Cell(int x, int y){
         this.x=x;
@@ -54,18 +57,6 @@ public class Cell {
         this.garlicContainerCell=null;
         this.usable=true;
     }
-
-    public List<Agent> getAgents(){
-        return agents;
-    }
-    public List<Garlic> getGarlics(){
-        return garlics;
-    }
-
-    public GarlicContainerCell getGarlicContainerCell() {
-        return garlicContainerCell;
-    }
-
     public Object getFirstObject(){
         if(agents.size()!=0) return agents.get(0);
         if(garlics.size()!=0) return garlics.get(0);
@@ -73,16 +64,5 @@ public class Cell {
             return garlicContainerCell;
         }
         return null;
-    }
-
-    public int getX(){
-        return x;
-    }
-    public int getY(){
-        return y;
-    }
-
-    public Boolean isUsable(){
-        return usable;
     }
 }

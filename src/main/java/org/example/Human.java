@@ -10,7 +10,7 @@ public class Human extends Agent{
     protected int lastGarlicStep;
     protected boolean safe;
     protected boolean trained;
-    SimulationConfig config=SimulationConfig.getInstance(); //do tworzenia wampirow
+    protected SimulationConfig config; //do tworzenia wampirow
 
     /*stałe*/
     final int MAX_NUMB_OF_HUMANBEINGS = 200;
@@ -28,6 +28,7 @@ public class Human extends Agent{
 
         this.transformationProb=transformationProb;
         this.addProb=addProb;
+        config=SimulationConfig.getInstance();
 
         //wartosci poczatkowe
         this.lastGarlicStep=0;

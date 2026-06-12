@@ -1,8 +1,4 @@
 package org.example;
 
 //automatyczne tworzenie metod equals(), toString(), hashCode() dzieki public record:
-public record ObjectToRender(
-    int x,
-    int y,
-    ObjectType type
-){}
+public record ObjectToRender(int x, int y, ObjectType type){}

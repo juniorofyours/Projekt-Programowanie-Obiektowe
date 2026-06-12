@@ -1,13 +1,17 @@
 package org.example;
 
+import lombok.Getter;
+
 import java.util.Random;
 
 public class AgentPosition {
-    int x;
-    int y;
-    Board board;
-    Agent agent;
-    Random rand;
+    @Getter
+    private int x;
+    @Getter
+    private int y;
+    private final Board board;
+    private final Agent agent;
+    private Random rand;
 
     public AgentPosition(Agent agent, Board board, int x, int y){
         this.agent=agent;
@@ -38,10 +42,4 @@ public class AgentPosition {
         y=newY;
     }
 
-    public int getX() {
-        return x;
-    }
-    public int getY(){
-        return y;
-    }
 }

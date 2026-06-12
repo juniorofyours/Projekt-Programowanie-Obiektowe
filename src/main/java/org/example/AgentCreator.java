@@ -1,10 +1,10 @@
 package org.example;
 
 public class AgentCreator {
-    Simulation simulation;
-    Board board;
-    SimulationConfig config=SimulationConfig.getInstance();
-    SimulationStats stats=SimulationStats.getInstance();
+    private final Simulation simulation;
+    private final Board board;
+    private final SimulationConfig config=SimulationConfig.getInstance();
+
     public AgentCreator(Simulation simulation, Board board){
         this.simulation=simulation;
         this.board=board;

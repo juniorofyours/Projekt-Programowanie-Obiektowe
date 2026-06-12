@@ -1,10 +1,14 @@
 package org.example;
 
+import lombok.Getter;
+
 import java.util.List;
 
 public class Board {
     private Cell[][] grid;
+    @Getter
     private int width;
+    @Getter
     private int height;
 
     public Board(int width, int height){
@@ -122,12 +126,6 @@ public class Board {
         return grid[nearestX][nearestY];
     }
 
-    public int getWidth(){
-        return width;
-    }
-    public int getHeight(){
-        return height;
-    }
     public Cell getCell(int x, int y){
         return grid[x][y];
     } //zwraca komórkę o danych współrzędnych

@@ -15,6 +15,7 @@ public class Vampire extends Agent{
         this.waitingForMoving = new WaitingMovingStrategy();
     }
 
+    @Override
     public void updateCurrentState(){
         if(!clock.isNight()) hide();
         else showUp();
@@ -34,10 +35,7 @@ public class Vampire extends Agent{
         movement=randomMoving;
     }
 
-    public Boolean isHidden(){
-        return hidden;
-    }
-
+    @Override
     public void interact(){
         if(hidden) return;
         Cell cell=board.getCell(position.getX(), position.getY());
@@ -65,10 +63,6 @@ public class Vampire extends Agent{
         loseEnergy(energyLoss);
         ConsoleColors.printlnYellow("<<Zaatakowanie wampira przez czosnek>>");
         stats.addInteractionOfType(InteractionType.GARLIC_ATTACK);
-    }
-
-    public void setHidden(boolean hidden){
-        this.hidden=hidden;
     }
 
 }

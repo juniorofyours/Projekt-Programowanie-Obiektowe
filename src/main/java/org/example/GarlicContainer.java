@@ -1,5 +1,8 @@
 package org.example;
 
+import lombok.Getter;
+
+@Getter
 public class GarlicContainer {
     private GarlicContainerCell[][] containerCells;
     private int width;
@@ -29,25 +32,7 @@ public class GarlicContainer {
             }
         }
     }
-    public int getX_min(){
-        return x_min;
-    }
-    public int getX_max(){
-        return x_max;
-    }
 
-    public int getY_min(){
-        return y_min;
-    }
-
-    public int getY_max(){
-        return y_max;
-    }
-
-
-    public GarlicContainerCell[][] getContainerCells(){
-        return containerCells;
-    }
     public GarlicContainerCell getContainerCell(int x, int y){
         return containerCells[x-x_min][y-y_min];
     }

@@ -4,18 +4,18 @@ import lombok.Getter;
 
 @Getter
 public class SimulationClock {
-    private SimulationConfig config=SimulationConfig.getInstance();
+    private final SimulationConfig config=SimulationConfig.getInstance();
     private volatile int step=0;
     private volatile float hour=0;
-    private volatile int stepsPerHour=50;
-    private volatile float sunsetHour=18;
-    private volatile float sunriseHour=6;
+    private final int stepsPerHour=50;
+    private final float sunsetHour=18;
+    private final float sunriseHour=6;
     private volatile boolean night=true;
 
     private SimulationClock(){}
 
-    public static class Holder{
-        public static final SimulationClock instance=new SimulationClock();
+    private static class Holder{
+        private static final SimulationClock instance=new SimulationClock();
     }
     public static SimulationClock getInstance(){
         return Holder.instance;

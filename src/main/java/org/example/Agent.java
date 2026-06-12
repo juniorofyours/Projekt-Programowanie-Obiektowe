@@ -1,21 +1,25 @@
 package org.example;
 
+import lombok.Getter;
+
 import java.util.Random;
 
 public abstract class Agent {
     protected Simulation simulation;
     protected Board board;
-    protected AgentPosition position;
+    protected final AgentPosition position;
     protected MovingStrategy movement;
-    protected SimulationClock clock=SimulationClock.getInstance();
-    protected SimulationStats stats=SimulationStats.getInstance();
+    protected final SimulationClock clock;
+    protected final SimulationStats stats;
     protected int energyLevel;
     protected int energyMax;
+    @Getter
     protected int energyBoost;
+    @Getter
     protected int energyLoss;
+    protected final int id;
+    protected Random rand;
     protected static int nextID=0;
-    protected int id;
-    protected Random rand=new Random();
 
     public Agent(Simulation simulation, Board board, int x, int y, int energyBoost, int energyLoss){
         this.simulation=simulation;
@@ -27,6 +31,9 @@ public abstract class Agent {
         this.energyLoss=energyLoss;
         this.movement=new RandomMovingStrategy();
         this.id=nextID++;
+        clock=SimulationClock.getInstance();
+        stats=SimulationStats.getInstance();
+        rand=new Random();
     }
 
     public int getX(){
@@ -67,12 +74,5 @@ public abstract class Agent {
 //        określoną w arguemncie
         energyLevel-=energyLoss;
         if(energyLevel<0) energyLevel=0;
-    }
-    public int getEnergyBoost() {
-        return energyBoost;
-    }
-
-    public int getEnergyLoss() {
-        return energyLoss;
     }
 }

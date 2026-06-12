@@ -1,31 +1,24 @@
 package org.example;
 
-import lombok.Generated;
-import lombok.Getter;
-import lombok.Setter;
-
 import java.util.ArrayList;
 import java.util.List;
 
 public class Simulation implements Runnable{
-    private SimulationConfig config=SimulationConfig.getInstance();
-    private SimulationStats stats=SimulationStats.getInstance();
-    private SimulationClock clock=SimulationClock.getInstance();
-    @Setter
+    private final SimulationConfig config;
+    private final SimulationStats stats;
+    private final SimulationClock clock;
     private Board board;
-    @Getter
-    @Setter
     private GarlicContainer container;
-    @Getter
-    private ArrayList<Agent> agents;
-    private ArrayList<Garlic> garlics;
+    private final List<Agent> agents;
+    private final List<Garlic> garlics;
     private AgentCreator creator;
 
     public Simulation(){
-//        board=new Board(width, height);
         agents=new ArrayList<>();
         garlics=new ArrayList<>();
-        container=null;
+        config=SimulationConfig.getInstance();
+        stats=SimulationStats.getInstance();
+        clock=SimulationClock.getInstance();
     }
 
     public void init(){
@@ -33,6 +26,7 @@ public class Simulation implements Runnable{
         int width=config.getWorldConfig().getWidth();
         int height=config.getWorldConfig().getHeight();
         board=new Board(width, height);
+        creator=new AgentCreator(this, board);
 
         int container_width=width/5;
         int container_height=height/5;
@@ -44,7 +38,6 @@ public class Simulation implements Runnable{
         container=new GarlicContainer(min_x, max_x, min_y,max_y);
         board.addGarlicContainer(container);
 
-        creator=new AgentCreator(this, board);
         creator.createVampires(config.getVampireConfig().getInitialNumber());
         creator.createPeople(config.getHumanConfig().getInitialNumber());
         creator.createTrainedPeople(config.getTrainedHumanConfig().getInitialNumber());
@@ -61,7 +54,7 @@ public class Simulation implements Runnable{
             }
 
             try {
-                Thread.sleep(10);
+                Thread.sleep(20);
             } catch (InterruptedException e) {
                 Thread.currentThread().interrupt();
             }

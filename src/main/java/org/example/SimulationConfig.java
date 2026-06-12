@@ -5,7 +5,6 @@ import lombok.Setter;
 
 @Getter
 public class SimulationConfig {
-
     private final WorldConfig worldConfig =new WorldConfig();
     private final VampireConfig vampireConfig=new VampireConfig();
     private final HumanConfig humanConfig= new HumanConfig();
@@ -13,8 +12,8 @@ public class SimulationConfig {
 
     private SimulationConfig(){}
 
-    public static class Holder{
-        public static final SimulationConfig instance=new SimulationConfig();
+    private static class Holder{
+        private static final SimulationConfig instance=new SimulationConfig();
     }
     public static SimulationConfig getInstance(){
         return Holder.instance;
@@ -56,13 +55,6 @@ public class SimulationConfig {
         private volatile float throwProb=0.1f;
         private volatile int garlicStockMax=3;
     }
-
-//    public static class GarlicContainerConfig{
-//        private volatile int x_min=400;
-//        private volatile int x_max=599;
-//        private volatile int y_min=0;
-//        private volatile int y_max=200;
-//    }
 
 }
 

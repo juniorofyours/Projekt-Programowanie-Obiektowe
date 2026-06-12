@@ -2,7 +2,7 @@ package org.example;
 
 public class CollectMovingStrategy implements MovingStrategy{ //strategia poruszania się dla wytrenowanych
 //    ludzi, gdy muszą dobrać czosnek z kontenera
-    private Board board;
+    private final Board board;
     public CollectMovingStrategy(Board board){
         this.board=board;
     }

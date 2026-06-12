@@ -2,6 +2,9 @@ package org.example;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.test.util.ReflectionTestUtils;
+
+import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -16,7 +19,7 @@ class SimulationTest {
     void setUp() {
         boardMock = mock(Board.class);
         simulation = new Simulation();
-        simulation.setBoard(boardMock);
+        ReflectionTestUtils.setField(simulation, "board", boardMock);
     }
 
     @Test
@@ -26,11 +29,12 @@ class SimulationTest {
         config.getVampireConfig().setInitialNumber(10);
 
         simulation.init();
+        List<Agent> agents=(ArrayList<Agent>)ReflectionTestUtils.getField(simulation, "agents");
 
-        assertEquals(30, simulation.getAgents().size(), "Lista agentów stworzonego środowiska symulacji powinna zawierać wszystkich agentów" +
+        assertEquals(30, agents.size(), "Lista agentów stworzonego środowiska symulacji powinna zawierać wszystkich agentów" +
                 "określonych w konfiguracji");
 
-        assertNotNull(simulation.getContainer(), "Kontener stworzonego środowiska symulacji nie powinien być null");
+        assertNotNull((ReflectionTestUtils.getField(simulation, "container")), "Kontener stworzonego środowiska symulacji nie powinien być null");
     }
 
     @Test
@@ -43,11 +47,12 @@ class SimulationTest {
         simulation.addAgent(humanMockTwo);
 
         simulation.replaceAgent(humanMock, vampireMock);
+        List<Agent> agents=(ArrayList<Agent>)ReflectionTestUtils.getField(simulation, "agents");
 
         assertEquals(1, simulation.getNumberOfHumanBeings(), "Stary agent powinien być usunięty z listy agentów");
         assertEquals(1, simulation.getNumberOfVampires(), "Nowy agent powinien zostać dodany do listy agentów");
 
-        assertSame(vampireMock, simulation.getAgents().get(0), "Nowy agent powinien zostać umieszczony w liście" +
+        assertSame(vampireMock, agents.get(0), "Nowy agent powinien zostać umieszczony w liście" +
                 "w miejscu starego agenta");
 
         verify(boardMock, description("Symulacja powinna zastąpić starego agenta nowym agentem na planszy"))
@@ -85,7 +90,7 @@ class SimulationTest {
     void testGetCoordinatesOfContainerReturnsCorrectArray() {
         GarlicContainer container = new GarlicContainer(2, 5, 2, 6);
 
-        simulation.setContainer(container);
+        ReflectionTestUtils.setField(simulation, "container", container);
 
         int[] coords = simulation.getCoordinatesOfContainer();
 
