@@ -27,11 +27,11 @@ mvn compile javafx:run
 
 Po pomyślnym uruchomieniu aplikacji zobaczysz okno symulacji
 
-### Interfejs Graficzny (GUI)
-![Widok glowny symulacji](images/simulation_snapshot.png)
+### Interfejs Graficzny (Inicjalizacja i uruchomienie symulacji)
+<img src=".github/images/animacja_projekt.gif" width="60%">
 
 *Możesz dynamicznie zmieniać parametry takie jak "Prawdopodobieństwo na zamianę w wampira" za pomocą suwaków w trakcie trwania symulacji,
-aby móc przetestować nowe parametry dla pojawiających się nowych agentów*
+aby móc przetestować nowe parametry dla pojawiających się agentów*
 
 ### Logi z przebiegu symulacji w konsoli
 W terminalu aplikacja na bieżąco informuje o wydarzeniach z symulacji

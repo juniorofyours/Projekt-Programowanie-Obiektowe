@@ -20,24 +20,27 @@ public class CanvasRenderingUtil {
     /**
      * Definicja ścieżki wektorowej SVG reprezentującej ikonę wampira.
      */
-    private final String vampireSVGPath="M 50,15 Q 32,15 32,35 L 20,25 L 28,45 Q 28,65 50,75 Q 72," +
-            "65 72,45 L 80,25 L 68,35 Q 68,15 50,15 Z M 50,22 Q 58,32 66,36 Q 66,22 50,22" +
-            " Z M 34,36 Q 42,32 50,22 Q 50,22 34,36 Z M 40,45 A 3,3 0 1,1 46,45 A 3,3 0 1," +
-            "1 40,45 Z M 54,45 A 3,3 0 1,1 60,45 A 3,3 0 1,1 54,45 Z M 42,56 L 44,56 L 43,6" +
-            "1 Z M 58,56 L 56,56 L 57,61 Z M 40,55 Q 50,59 60,55 Q 50,57 40,55 Z";
+    private final String vampireSVGPath="M 0,-30 Q -18,-30 -18,-10 L -30,-20 L " +
+            "-22,0 Q -22,20 0,30 Q 22,20 22,0 L 30,-20 L 18,-10 Q 18,-30 0,-30" +
+            " Z M 0,-23 Q 8,-13 16,-9 Q 16,-23 0,-23 Z M -16,-9 Q -8,-13 0," +
+            "-23 Q 0,-23 -16,-9 Z M -10,0 A 3,3 0 1,1 -4,0 A 3,3 0 1,1 -10,0" +
+            " Z M 4,0 A 3,3 0 1,1 10,0 A 3,3 0 1,1 4,0 Z M -8,11 L -6,11 L -7," +
+            "16 Z M 8,11 L 6,11 L 7,16 Z M -10,10 Q 0,14 10,10 Q 0,12 -10,10 Z";
 
     /**
      * Definicja ścieżki wektorowej SVG reprezentującej ikonę człowieka.
      */
-    private final String humanSVGPath="M 50,40 A 12,12 0 1,1 50,16 A 12,12 0 1,1 50,40 Z " +
-            "M 50,46 C 33,46 20,55 20,72 L 20,84 L 80,84 L 80,72 C 80,55 67,46 50,46 Z";
+    private final String humanSVGPath="M 0,-10 A 12,12 0 1,1 0,-34 A 12,12 0 1,1" +
+            " 0,-10 Z M 0,-4 C -17,-4 -30,5 -30,22 L -30,34 L 30,34 L 30,22 C " +
+            "30,5 17,-4 0,-4 Z";
 
     /**
      * Definicja ścieżki wektorowej SVG reprezentującej czosnek.
      */
-    private final String garlicSVGPath="M 50,15 Q 48,25 43,28 Q 20,25 20,53 Q 20,85 50,85 " +
-            "Q 80,85 80,53 Q 80,25 57,28 Q 52,25 50,15 Z M 38,34 Q 38,60 48,83 Q 34,70 34,44 Z " +
-            "M 62,34 Q 66,70 52,83 Q 62,60 62,44 Z M 49,27 L 51,27 L 50,84 Z";
+    private final String garlicSVGPath="M 0,-35 Q -2,-25 -7,-22 Q -30,-25 -30,3 Q" +
+            " -30,35 0,35 Q 30,35 30,3 Q 30,-25 7,-22 Q 2,-25 0,-35 Z M -12,-16 Q" +
+            " -12,10 -2,33 Q -16,20 -16,-6 Z M 12,-16 Q 16,20 2,33 Q 12,10 12,-6 Z" +
+            " M -1,-23 L 1,-23 L 0,34 Z";
 
     /**
      * Konstruuje obiekt powiązany z płótnem (canvas) interfejsu graficznego.
