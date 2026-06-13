@@ -1,7 +1,6 @@
 # Projekt-Programowanie-Obiektowe
-Jest to projekt z programowania obiektowego.
-Tytuł projektu: "Wampiry"
-
+Projekt programowania obiektowego "Symulacja wampirów".
+<br><br>
 ## 🚀 Szybki start (Quick Start)
 
 ### Wymagania wstępne
@@ -22,13 +21,14 @@ cd Projekt-Programowanie-Obiektowe
 # 3. Zbuduj i uruchom aplikację
 mvn compile javafx:run
 ```
+<br>
 
 ## 💻 Przykładowe działanie (Sample Run)
 
 Po pomyślnym uruchomieniu aplikacji zobaczysz okno symulacji
 
 ### Interfejs Graficzny (Inicjalizacja i uruchomienie symulacji)
-<img src=".github/images/animacja_projekt.gif" width="60%">
+<img src=".github/images/animacja_projekt.gif" width="100%">
 
 *Możesz dynamicznie zmieniać parametry takie jak "Prawdopodobieństwo na zamianę w wampira" za pomocą suwaków w trakcie trwania symulacji,
 aby móc przetestować nowe parametry dla pojawiających się agentów*
