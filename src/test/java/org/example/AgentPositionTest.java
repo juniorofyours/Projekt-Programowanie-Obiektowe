@@ -44,8 +44,8 @@ public class AgentPositionTest {
     void updateAgentPositionWhenMove(){
         position.move(1,1);
 
-        assertEquals(0, position.x, "Agent powinien mieć nowy x w obrębie planszy");
-        assertEquals(0, position.y, "Agent powinien mieć nowy y w obrębie planszy");
+        assertEquals(0, position.getX(), "Agent powinien mieć nowy x w obrębie planszy");
+        assertEquals(0, position.getY(), "Agent powinien mieć nowy y w obrębie planszy");
 
         verify(boardMock, description("Agent powinien być przeniesiony po planszy")).updateAgent(agentMock, 0, 0);
 

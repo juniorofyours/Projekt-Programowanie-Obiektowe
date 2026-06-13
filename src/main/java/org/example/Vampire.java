@@ -1,5 +1,7 @@
 package org.example;
 
+import lombok.Getter;
+
 import java.util.List;
 
 /**
@@ -12,7 +14,8 @@ import java.util.List;
  * </p>
  */
 public class Vampire extends Agent{
-    private Boolean hidden;
+    @Getter
+    private boolean hidden;
     private MovingStrategy waitingForMoving;
     private MovingStrategy randomMoving;
 

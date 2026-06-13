@@ -2,6 +2,7 @@ package org.example;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.test.util.ReflectionTestUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,7 +28,8 @@ public class VampireTest {
 
     @Test
     void testShowUpAtNight(){
-        vampire.setHidden(true);
+        ReflectionTestUtils.setField(vampire, "hidden", true);
+//        vampire.setHidden(true);
         vampire.movement=new WaitingMovingStrategy();
 
         clock.setNight();
@@ -39,7 +41,8 @@ public class VampireTest {
     }
     @Test
     void testHideInTheDay(){
-        vampire.setHidden(false);
+        ReflectionTestUtils.setField(vampire, "hidden", false);
+//        vampire.setHidden(false);
         vampire.movement=new RandomMovingStrategy();
 
         clock.setDay();
@@ -118,7 +121,7 @@ public class VampireTest {
 
         vampire.tryRemove();
 
-        verify(simulationMock, never().description("Wampir powinien zostać usunięty z symulacji")).removeAgent(vampire);
+        verify(simulationMock, never().description("Wampir nie powinien zostać usunięty z symulacji")).removeAgent(vampire);
     }
 
 }

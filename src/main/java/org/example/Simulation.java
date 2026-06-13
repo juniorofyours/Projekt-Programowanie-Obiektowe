@@ -258,7 +258,7 @@ public class Simulation implements Runnable{
      * </p>
      */
     public synchronized void step(){
-        ConsoleColors.printlnBlue("\nKrok: "+clock.getStep()+ ", godzina: "+clock.getHour());
+        ConsoleColors.printlnBlue("\nKrok: "+clock.getStep()+ ", godzina: "+Math.floor(clock.getHour()));
         updateAgentStates();
         tryAddNewPeople();
         moveAgents();

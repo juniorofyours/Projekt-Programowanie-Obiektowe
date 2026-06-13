@@ -2,13 +2,15 @@ package org.example;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import static org.junit.jupiter.api.Assertions.*;
 
 
 public class SimulationStatsTest {
     SimulationStats stats=SimulationStats.getInstance();
-    ConcurrentHashMap<ObjectType, Integer> objectMap;
+    Map<ObjectType, Integer> objectMap;
 
     @BeforeEach
     void setup(){
