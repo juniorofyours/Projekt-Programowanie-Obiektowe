@@ -1,5 +1,9 @@
 package org.example;
 
+
+/**
+ * Klasa używana do wypisywania tekstu w danym wybranym kolorze w konsoli
+ */
 public class ConsoleColors {
 
     public static final String RESET = "\u001B[0m";

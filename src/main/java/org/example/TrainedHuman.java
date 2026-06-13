@@ -116,7 +116,7 @@ public class TrainedHuman extends Human{
         //losowanie z zakresu
         if(rand.nextFloat(RANGE_OF_PROBABILITY_OF_THROW) < this.throwProb) {
 
-            Garlic garlic = new Garlic(this.simulation, this.board, this.position.getX(), this.position.getY());
+            Garlic garlic = new Garlic(this.position.getX(), this.position.getY());
             this.simulation.addGarlic(garlic);
 
             this.garlicStock-=1;

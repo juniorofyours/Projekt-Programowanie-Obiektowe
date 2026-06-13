@@ -2,6 +2,12 @@ package org.example;
 
 import lombok.Getter;
 
+/**
+ * Typ Enum reprezentujący typ interakcji między agentami i czosnkiem.
+ * <p>
+ * Służy głównie do zbierania danych statystycznych dotyczących liczby poszczególnych interakcji.
+ * </p>
+ */
 @Getter
 public enum InteractionType {
     ATTACK("Ataki wampirów na ludzi"),
@@ -12,7 +18,18 @@ public enum InteractionType {
     GARLIC_ATTACK("Ataki czosnku na wampiry"),
     TRANSFORMATION("Transformacje ludzi w wampiry");
 
+    /**
+     * Tekstowy opis danego typu interakcji.
+     * * -- GETTER --
+     * Pobiera pełny opis tekstowy interakcji.
+     * @return Tekstowy opis interakcji.
+     */
     private final String description;
+
+    /**
+     * Konstruktor wewnętrzny powiązujący element enuma z jego opisem.
+     * * @param description Opis tekstowy
+     */
     InteractionType(String description){
         this.description=description;
     }

@@ -4,6 +4,10 @@ import lombok.Getter;
 
 import java.util.Random;
 
+
+/**
+ * Reprezentuje i zarządza pozycją pojedynczego agenta.
+ */
 public class AgentPosition {
     @Getter
     private int x;
@@ -13,6 +17,13 @@ public class AgentPosition {
     private final Agent agent;
     private Random rand;
 
+    /**
+     * Konstruuje nowy obiekt pozycji dla konkretnego agenta na wskazanej planszy.
+     * * @param agent Instancja agenta, do którego przypisana jest ta pozycja.
+     * @param board Plansza symulacji, na której znajduje się agent.
+     * @param x     Początkowa współrzędna x.
+     * @param y     Początkowa współrzędna y.
+     */
     public AgentPosition(Agent agent, Board board, int x, int y){
         this.agent=agent;
         this.board=board;
@@ -20,6 +31,17 @@ public class AgentPosition {
         this.y=y;
         this.rand=new Random();
     }
+
+    /**
+     * Losuje nową, poprawną pozycję dla agenta na planszy.
+     * <p>
+     * Metoda wykonuje maksymalnie 10 prób wylosowania komórki siatki. Sprawdza, czy
+     * dana komórka nadaje się do użytku ({@code isUsable()}). Jeśli w ciągu 10 prób
+     * nie uda się znaleźć wolnego miejsca, aktualne współrzędne agenta nie są zmieniane
+     * </p>
+     * * @return {@code true} jeśli pomyślnie znaleziono i ustawiono nową pozycję;
+     * {@code false} jeśli po 10 próbach nie udało się znaleźć zdatnej komórki.
+     */
     public boolean randomize(){
         Cell randomCell;
         int i=0;
@@ -33,8 +55,17 @@ public class AgentPosition {
         return true;
     }
 
-    public void move(int dx, int dy){ //metoda zmieniająca pozycję agenta o dany dx i dy i aktualizująca
-//        położenie agenta na planszy
+    /**
+     * Zmienia aktualne położenie agenta na planszy o zadany wektor przesunięcia (delta x i delta y).
+     * <p>
+     * Metoda wykorzystuje operację {@link Math#floorMod(int, int)},
+     * co gwarantuje prawidłowe zawijanie pozycji na krawędziach
+     * Po wyliczeniu nowych współrzędnych aktualizuje stan komórek w obiekcie {@link Board}.
+     * </p>
+     * * @param dx Przesunięcie wzdłuż osi x (liczba komórek w lewo/prawo).
+     * @param dy Przesunięcie wzdłuż osi y (liczba komórek w górę/dół).
+     */
+    public void move(int dx, int dy){
         int newX=Math.floorMod(x+dx, board.getWidth());
         int newY=Math.floorMod(y+dy, board.getHeight());
         board.updateAgent(agent, newX, newY);

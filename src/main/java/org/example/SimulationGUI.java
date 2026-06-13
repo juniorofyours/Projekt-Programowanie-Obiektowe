@@ -15,6 +15,14 @@ import java.util.Map;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
+/**
+ * Główna klasa GUI aplikacji oparta na bibliotece JavaFX.
+ * <p>
+ * Odpowiada za budowanie okna, w tym paneli konfiguracyjnych
+ * (dla wampirów, ludzi, wytrenowanych ludzi), tablic statystyk oraz obszaru renderowania grafiki (canvas).
+ * Klasa dziedziczy po {@link Application} i uruchamia pętlę renderowania wizualnego {@link AnimationTimer}.
+ * </p>
+ */
 public class SimulationGUI extends Application {
     Simulation simulation=new Simulation();
     SimulationConfig config=SimulationConfig.getInstance();
@@ -29,10 +37,14 @@ public class SimulationGUI extends Application {
     VBox interactionsPanel;
     VBox objectsPanel;
 
-    public void create(){
-        launch();
-    }
-
+    /**
+     * Punkt wejścia dla aplikacji JavaFX.
+     * <p>
+     * Inicjalizuje i układa poszczególne panele interfejsu (panele konfiguracji, startowe
+     * oraz informacyjne) w {@link BorderPane}. Konfiguruje scenę.
+     * </p>
+     * * @param stage Główne okno GUI.
+     */
     @Override
     public void start(Stage stage){
         VBox mainPanel=createMainPanel();
@@ -74,6 +86,9 @@ public class SimulationGUI extends Application {
         stage.show();
     }
 
+    /**
+     * Aktywuje pętlę aktualizacji GUI (renderowania obrazu i aktualizacji statystyk symulacji)
+     */
     private void startAnimationLoop(){
         AnimationTimer timer = new AnimationTimer() {
             @Override
@@ -86,6 +101,12 @@ public class SimulationGUI extends Application {
         timer.start();
     }
 
+    /**
+     * Inicjalizuje symulację
+     * <p>
+     *     Ustawia wysokość i szerokość canvas, uruchamia wątek silnika symulacji i rozpoczyna pętlę aktualizacji GUI
+     * </p>
+     */
     private void initSimulation(){
         if(config.getWorldConfig().isInitiated()) return;
         canvas.setWidth(config.getWorldConfig().getWidth());
@@ -96,6 +117,9 @@ public class SimulationGUI extends Application {
         startAnimationLoop();
     }
 
+    /**
+     * Aktualizuje panel informacyjny okna symulacji, przypisuje nowe dane do labeli.
+     */
     private void updateInfo(){
         stepNumberLabel.setText(String.valueOf(clock.getStep()));
         hourNumberLabel.setText(String.valueOf((int)(Math.floor(clock.getHour()))));
@@ -121,6 +145,10 @@ public class SimulationGUI extends Application {
         }
     }
 
+    /**
+     * Tworzy panel informacyjny GUI, zawierający krok, godzinę i statystyki symulacji.
+     * @return Stworzony panel informacyjny.
+     */
     private HBox createInfoPanel(){
         Label stepTextLabel=new Label("Krok");
         stepTextLabel.getStyleClass().add("main-label");
@@ -148,6 +176,12 @@ public class SimulationGUI extends Application {
         return infoPanel;
     }
 
+    /**
+     * Tworzy panel startowy zawierający przycisk inicjalizacji i startu symulacji.
+     * W
+     * Dodaje listner na event przyciśnięcia przycisku inicjalizacji. Event handler wywołuje metodę inicjalizacyjną.
+     * @return Panel startowy okna GUI
+     */
     private VBox createStartPanel(){
         Button initButton=new Button("Stwórz symulację");
         initButton.setOnAction((event)->{
@@ -163,6 +197,10 @@ public class SimulationGUI extends Application {
         return panel;
     }
 
+    /**
+     * Tworzy główny panel konfiguracyjny GUI.
+     * @return Panel główny konfiguracji.
+     */
     private VBox createMainPanel(){
         Label label=new Label("Główny panel ustawień");
         label.getStyleClass().add("main-label");
@@ -181,6 +219,10 @@ public class SimulationGUI extends Application {
         return panel;
     }
 
+    /**
+     * Tworzy panel konfiguracyjny GUI dla wampirów.
+     * @return Panel konfiguracji wampirów.
+     */
     private VBox createVampirePanel(){
         Label label=new Label("Panel ustawień wampirów");
         label.getStyleClass().add("main-label");
@@ -190,6 +232,11 @@ public class SimulationGUI extends Application {
         panel.getChildren().addAll(label, energyBoost, energyLoss);
         return panel;
     }
+
+    /**
+     * Tworzy panel konfiguracyjny GUI dla ludzi.
+     * @return Panel konfiguracji ludzi.
+     */
     private VBox createHumanPanel(){
         Label label=new Label("Panel ustawień osób");
         label.getStyleClass().add("main-label");
@@ -201,6 +248,11 @@ public class SimulationGUI extends Application {
         panel.getChildren().addAll(label, energyBoost, energyLoss, addProb, transformationProb);
         return panel;
     }
+
+    /**
+     * Tworzy panel konfiguracyjny GUI dla wytrenowanych ludzi.
+     * @return Panel konfiguracji wytrenowanych ludzi.
+     */
     private VBox createTrainedPanel(){
         Label label=new Label("Panel ustawień wytrenowych osób");
         label.getStyleClass().add("main-label");
@@ -212,6 +264,13 @@ public class SimulationGUI extends Application {
         return panel;
     }
 
+    /**
+     * Tworzy kontener labela ze spinnerem.
+     * <p>
+     *     Aktualizuje wybrane ustawienie symulacji za każdym razem, gdy zmienia się wartość spinnera.
+     * </p>
+     * @return Kontener spinnera.
+     */
     private VBox createNewSpinnerWithLabel(int minVal, int maxVal, Supplier<Integer> getter, Consumer<Integer> setter, String labelText){
         Label label=new Label(labelText);
         Spinner<Integer> spinner=new Spinner<>(minVal,maxVal, getter.get());
@@ -226,6 +285,13 @@ public class SimulationGUI extends Application {
         return container;
     }
 
+    /**
+     * Tworzy kontener labela ze sliderem.
+     * <p>
+     *     Aktualizuje wybrane ustawienie symulacji za każdym razem, gdy zmienia się wartość slidera.
+     * </p>
+     * @return Kontener slidera.
+     */
     private VBox createNewSliderWithLabel(float minVal, float maxVal, Supplier<Float> getter, Consumer<Float> setter, String labelText){
         Label label=new Label(labelText);
         Slider slider=new Slider(minVal,maxVal, getter.get());
@@ -240,6 +306,14 @@ public class SimulationGUI extends Application {
         container.getChildren().addAll(label, slider);
         return container;
     }
+
+    /**
+     * Tworzy kontener labela z toggle buttonem.
+     * <p>
+     *     Aktualizuje wybrane ustawienie symulacji za każdym razem, gdy zmienia się stan buttona (true lub false)
+     * </p>
+     * @return Kontener toggle buttona.
+     */
     private VBox createNewToggleButtonWithLabel(String buttonText, String labelText,Supplier<Boolean> getter, Consumer<Boolean> setter){
         Label label=new Label(labelText);
 

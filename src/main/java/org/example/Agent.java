@@ -4,6 +4,17 @@ import lombok.Getter;
 
 import java.util.Random;
 
+/**
+ * Abstrakcyjna klasa bazowa reprezentująca agenta w symulacji.
+ * <p>
+ * Każdy agent posiada unikalny identyfikator, określone położenie na planszy oraz poziom energii.
+ * Poruszanie się agenta jest oddelegowane do danych klas strategii implementujących interface {@link MovingStrategy}.
+ * </p>
+ * <p>
+ * Klasy potomne (np. {@code Human}, {@code Vampire}) muszą zaimplementować metody dotyczące
+ * aktualizacji stanu wewnętrznego oraz interakcji z innymi obiektami na planszy.
+ * </p>
+ */
 public abstract class Agent {
     protected Simulation simulation;
     protected Board board;
@@ -21,6 +32,16 @@ public abstract class Agent {
     protected Random rand;
     protected static int nextID=0;
 
+
+    /**
+     * Konstruuje nowego agenta i inicjalizuje jego podstawowe parametry, pozycję oraz strategię ruchu.
+     * * @param simulation  Instancja symulacji.
+     * @param board       Plansza, na której agent zostanie umieszczony.
+     * @param x           Początkowa współrzędna x na siatce planszy.
+     * @param y           Początkowa współrzędna y na siatce planszy.
+     * @param energyBoost Wartość boostu energii.
+     * @param energyLoss  Wartość utraty energii.
+     */
     public Agent(Simulation simulation, Board board, int x, int y, int energyBoost, int energyLoss){
         this.simulation=simulation;
         this.board=board;
@@ -36,28 +57,58 @@ public abstract class Agent {
         rand=new Random();
     }
 
+    /**
+     * Pobiera aktualną współrzędną x agenta.
+     * * @return Współrzędna pozioma.
+     */
     public int getX(){
         return position.getX();
     }
+
+    /**
+     * Pobiera aktualną współrzędną y agenta.
+     * * @return Współrzędna pionowa.
+     */
     public int getY(){
         return position.getY();
     }
 
+    /**
+     * Losuje nową, wolną pozycję dla agenta na planszy.
+     */
     public void randomizePosition(){
         position.randomize();
     }
 
-    public abstract void updateCurrentState(); //metoda, która zostanie zaimplementowana w klasach
-//    poszczególnych agentów aktualizująca ich stan
-    public abstract void interact(); //metoda, która zostanie zaimplementowana w klasach
-//    poszczególnych agentów przeprowadzająca ich interkacje z otoczeniem
+    /**
+     * Metoda abstrakcyjna odpowiedzialna za aktualizację stanu wewnętrznego agenta.
+     * Powinna być wywoływana w każdym takcie zegara przed wykonaniem ruchu.
+     */
+    public abstract void updateCurrentState();
 
-    public void move(){ //metoda wywołująca metodę move dla konkretnej strategii poruszania się
+    /**
+     * Metoda abstrakcyjna odpowiedzialna za interakcję agenta z otoczeniem.
+     */
+    public abstract void interact();
+
+    /**
+     * Wykonuje ruch agenta na planszy zgodnie z aktualnie przypisaną strategią {@link MovingStrategy}.
+     */
+    public void move(){
         movement.move(position, simulation);
         System.out.println("-Krok agenta nr."+id+" ("+this.getClass().getSimpleName()+") "+"[ "+position.getX()+" "+position.getY()+" ]");
     }
-    public boolean tryRemove(){ //metoda ususwająca agenta, jesli ma energię=0, powinna być nadpisana dla
-//        ludzi by z danym prawdopodobienstwem zamienic ich w wampiry
+
+    /**
+     * Weryfikuje, czy agent zostanie usunięty z symulacji z powodu braku energii.
+     * <p>
+     * Jeśli poziom energii spadnie do zera, agent zostaje usunięty z całej symulacji.
+     * Metoda zostaje nadpisana w klasie reprezentującej ludzi, aby umożliwić
+     * scenariusz transformacji człowieka w wampira zamiast standardowej śmierci.
+     * </p>
+     * * @return {@code true} jeśli agent umarł i został usunięty; {@code false} jeśli nie został usunięty.
+     */
+    public boolean tryRemove(){
         if(energyLevel==0) {
             simulation.removeAgent(this);
             ConsoleColors.printlnRed("<<Smierc agenta>>");
@@ -65,14 +116,21 @@ public abstract class Agent {
         }
         return false;
     }
-    protected void boostEnergy(int energyBoost){ //metoda zwiększająca energię agenta o daną ilość
-//        określoną w arguemncie
-        energyLevel+=energyBoost;
-        if(energyLevel>energyMax) energyLevel=energyMax;
+
+    /**
+     * Zwiększa aktualny poziom energii agenta o zadaną wartość, pilnując by nie została przekroczona
+     * maksymalna dopuszczalna ilość energii ({@code energyMax}).
+     * * @param energyBoost Ilość punktów energii, o którą ma zostać wzmocniony agent.
+     */
+    protected void boostEnergy(int energyBoost){
+        energyLevel=Math.min(energyLevel+energyBoost, energyMax);
     }
-    protected void loseEnergy(int energyLoss){ //metoda zmniejszająca energię agenta o daną ilość
-//        określoną w arguemncie
-        energyLevel-=energyLoss;
-        if(energyLevel<0) energyLevel=0;
+
+    /**
+     * Zmniejsza aktualny poziom energii agenta o zadaną wartość, pilnując by poaiom energii nie spadł poniżej 0
+     * * @param energyLoss Ilość punktów energii, którą agent traci.
+     */
+    protected void loseEnergy(int energyLoss){
+        energyLevel=Math.max(energyLevel-energyLoss, 0);
     }
 }

@@ -4,6 +4,13 @@ import lombok.Getter;
 
 import java.util.List;
 
+/**
+ * Reprezentuje dwuwymiarową planszę (siatkę) symulacji składającą się z komórek {@link Cell}.
+ * <p>
+ * Klasa odpowiada za zarządzanie rozmieszczeniem agentów (ludzi, wampirów)
+ * oraz innych obiektów (czosnku i kontenera) na siatce.
+ * </p>
+ */
 public class Board {
     private Cell[][] grid;
     @Getter
@@ -11,6 +18,11 @@ public class Board {
     @Getter
     private int height;
 
+    /**
+     * Konstruuje nową planszę o zadanych wymiarach i automatycznie wypełnia ją komórkami.
+     * * @param width  Szerokość planszy.
+     * @param height Wysokość planszy.
+     */
     public Board(int width, int height){
         grid=new Cell[width][height];
         this.width=width;
@@ -18,33 +30,63 @@ public class Board {
         fillGrid();
     }
 
-    private void fillGrid(){ //metoda która tworzy nowe komórki w tablicy grid
+    /**
+     * Inicjalizuje tablicę siatki, tworząc nową instancję obiektu {@link Cell}
+     * dla każdej pary współrzędnych x i y.
+     */
+    private void fillGrid(){
         for(int i=0; i<width;i++){
             for(int j=0;j<height;j++){
                 grid[i][j]=new Cell(i, j);
             }
         }
     }
-    public void updateAgent(Agent agent, int newX, int newY){ //metoda, która dodaje agenta do nowej komórki
-//        o współrzędnych newX i newY i usuwa agenta ze starej komórki
+
+    /**
+     * Przemieszcza agenta na planszy do nowej komórki.
+     * Dodaje obiekt agenta do nowej komórki oraz usuwa go z dotychczasowej lokalizacji.
+     * * @param agent  Obiekt agenta, który zmienia pozycję.
+     * @param newX   Nowa współrzędna x docelowej komórki.
+     * @param newY   Nowa współrzędna y docelowej komórki.
+     */
+    public void updateAgent(Agent agent, int newX, int newY){
         int x=agent.getX();
         int y=agent.getY();
         grid[newX][newY].addAgent(agent);
         grid[x][y].removeAgent(agent);
     }
-    public void removeFromBoard(Agent agent){ //usuwa agenta z komórki w której się znajduje
+
+    /**
+     * Usuwa agenta z komórki planszy, w której się aktualnie znajduje.
+     * * @param agent Agent przeznaczony do usunięcia z komórki.
+     */
+    public void removeFromBoard(Agent agent){
         int x=agent.getX();
         int y=agent.getY();
 
         grid[x][y].removeAgent(agent);
     }
-    public void addToBoard(Agent agent){ //dodaje agenta do komórki o danych współrzędnych
+
+    /**
+     * Umieszcza agenta w komórce odpowiadającej jego współrzędnym x i y;
+     * * @param agent Agent do dodania do komórki
+     */
+    public void addToBoard(Agent agent){
         int x=agent.getX();
         int y=agent.getY();
 
         grid[x][y].addAgent(agent);
     }
 
+    /**
+     * Dokonuje podmiany agentów wewnątrz listy agentów konkretnej komórki.
+     * <p>
+     * Metoda wyszukuje indeks starego agenta w liście komórki oraz wstawia nowego agenta
+     * na ten sam indeks. Wykorzystywana przy transformacjach agentów (np. zamiana człowieka w wampira)
+     * </p>
+     * * @param agentToBeReplaced Dotychczasowy agent, który ma zostać podmieniony.
+     * @param newAgent          Nowy obiekt agenta do podstawienia pod starego agenta
+     */
     public void replaceAgentInCell(Agent agentToBeReplaced, Agent newAgent){
         int x=agentToBeReplaced.getX();
         int y=agentToBeReplaced.getY();
@@ -54,29 +96,47 @@ public class Board {
         agents.set(index, newAgent);
     }
 
-    public void removeGarlicFromBoard(Garlic garlic){ //usuwa czosnek z komórki
+    /**
+     * Usuwa obiekt czosnku z komórki planszy, na której się znajdował.
+     * * @param garlic Obiekt czosnku przeznaczony do usunięcia.
+     */
+    public void removeGarlicFromBoard(Garlic garlic){
         int x=garlic.getX();
         int y=garlic.getY();
 
         grid[x][y].removeGarlic(garlic);
     }
-    public void addGarlicToBoard(Garlic garlic){ //dodaje czosnek do komórki
+
+    /**
+     * Umieszcza obiekt czosnku w komórce siatki na podstawie jego współrzędnych.
+     * * @param garlic Obiekt czosnku, który ma zostać dodany do planszy.
+     */
+    public void addGarlicToBoard(Garlic garlic){
         int x=garlic.getX();
         int y=garlic.getY();
 
         grid[x][y].addGarlic(garlic);
     }
 
-    public void addGarlicContainer(GarlicContainer container){ //dodaje kontener do planszy,
-//        czyli wypełnia komórki planszy komórkami kontenera
+    /**
+     * Nanosi kontener na czosnek na siatkę planszy.
+     * Iteruje po komórkach kontenera i dodaje te komórki kontenera
+     * do komórek planszy.
+     * * @param container Obiekt kontenera przechowujący granice i swoje komórki.
+     */
+    public void addGarlicContainer(GarlicContainer container){
         for(int i=container.getX_min(); i<=container.getX_max();i++){
             for(int j=container.getY_min(); j<=container.getY_max();j++){
                 grid[i][j].addGarlicContainerCell(container.getContainerCell(i, j));
             }
         }
     }
-    public void removeGarlicContainer(GarlicContainer container){ //usuwa cały kontener z planszy,
-//        czyli wszystkie komórki kontenera z komórek planszy
+
+    /**
+     * Usuwa strukturę kontenera na czosnek z planszy.
+     * * @param container Obiekt kontenera, który ma być usunięty z planszy.
+     */
+    public void removeGarlicContainer(GarlicContainer container){
         for(int i=container.getX_min(); i<=container.getX_max();i++){
             for(int j=container.getY_min(); j<=container.getY_max();j++){
                 grid[i][j].removeGarlicContainerCell();
@@ -126,7 +186,14 @@ public class Board {
         return grid[nearestX][nearestY];
     }
 
+
+    /**
+     * Pobiera z siatki obiekt komórki o wskazanych współrzędnych.
+     * * @param x Współrzędna pozioma planszy
+     * @param y Współrzędna pionowa planszy
+     * @return Obiekt {@link Cell} o podanych współrzędnych.
+     */
     public Cell getCell(int x, int y){
         return grid[x][y];
-    } //zwraca komórkę o danych współrzędnych
+    }
 }

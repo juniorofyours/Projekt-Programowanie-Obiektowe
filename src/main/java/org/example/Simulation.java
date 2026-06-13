@@ -3,6 +3,15 @@ package org.example;
 import java.util.ArrayList;
 import java.util.List;
 
+
+/**
+ * Główny silnik symulacji agentowej.
+ * <p>
+ * Klasa implementuje interfejs {@link Runnable}, co pozwala na uruchomienie symulacji
+ * w osobnym wątku. Odpowiada za inicjalizację świata, zarządzanie czasem (taktami zegara)
+ * oraz pełnym cyklem życia agentów (ludzi, trenowanych ludzi, wampirów) i obiektów (czosnek).
+ * </p>
+ */
 public class Simulation implements Runnable{
     private final SimulationConfig config;
     private final SimulationStats stats;
@@ -13,6 +22,10 @@ public class Simulation implements Runnable{
     private final List<Garlic> garlics;
     private AgentCreator creator;
 
+    /**
+     * Konstruuje nową instancję symulacji.
+     * Inicjalizuje listy agentów i czosnku oraz pobiera obiekty konfiguracji, statystyk i zegara
+     */
     public Simulation(){
         agents=new ArrayList<>();
         garlics=new ArrayList<>();
@@ -21,6 +34,14 @@ public class Simulation implements Runnable{
         clock=SimulationClock.getInstance();
     }
 
+    /**
+     * Inicjalizuje stan początkowy symulacji.
+     * <p>
+     * Metoda tworzy planszę, kontener na czosnek
+     * oraz zleca obiektowi {@link AgentCreator} stworzenie początkowej liczby wampirów,
+     * zwykłych ludzi i wytrenowanych ludzi
+     * </p>
+     */
     public void init(){
 //        parametry
         int width=config.getWorldConfig().getWidth();
@@ -45,6 +66,11 @@ public class Simulation implements Runnable{
         config.getWorldConfig().setInitiated(true);
     }
 
+    /**
+     * Główna pętla symulacji.
+     * Odpowiada za cykliczne wywoływanie kroków symulacji, gdy symulacja
+     * nie jest zapauzowana
+     */
     @Override
     public void run(){
         init();
@@ -61,23 +87,41 @@ public class Simulation implements Runnable{
         }
     }
 
-    public void addAgent(Agent agent){ //dodaje agenta na planszę i do listy agents w symulacji
+    /**
+     * Dodaje nowego agenta do symulacji (dodaje go na planszę i do
+     * wewnętrznej listy symulacji oraz aktualizuje globalne statystyki).
+     * * @param agent Obiekt nowego agenta.
+     */
+    public void addAgent(Agent agent){
         board.addToBoard(agent);
         agents.add(agent);
 
         stats.addObjectOfType(this.recognizeType(agent));
     }
-    public void removeAgent(Agent agent){ //usuwa agenta z planszy i z listy agents w symulacji
+
+    /**
+     * Usuwa wybranego agenta z symulacji.
+     * Usuwa go z planszy, listy agentów oraz aktualizuje statystyki.
+     * * @param agent Agent do usunięcia.
+     */
+    public void removeAgent(Agent agent){
         board.removeFromBoard(agent);
         agents.remove(agent);
 
         stats.removeObjectOfType(this.recognizeType(agent));
     }
 
-    public void replaceAgent(Agent agentToBeReplaced, Agent newAgent){ //metoda, która zmienia już istniejący element
-//        listy na nowy element, przydatna przy zamianie człowieka w wampira, lub człowieka w wytrenowanego człowieka, żeby
-//        uniknąć problemów z iteracją po agentach w liście, metoda ta wywołuje również board.replaceAgentInCell, która robi to samo,
-//        tylko, że z listami w komórkach (Cell)
+    /**
+     * Dokonuje bezpiecznej zmiany jednego agenta na drugiego w trakcie iteracji.
+     * <p>
+     * Jest przydatna w trakcie transformacji agentów, takich jak przemiana człowieka
+     * w wampira lub rekrutacja człowieka na człowieka wyszkolonego. Metoda podmienia agenta na planszy,
+     * oraz liście agentów i modyfikuje statystyki agentów.
+     * </p>
+     * * @param agentToBeReplaced Dotychczasowy agent, który ma zostać usunięty.
+     * @param newAgent Nowy agent, który ma być obsadzony w tym samym miejscu, co poprzednik
+     */
+    public void replaceAgent(Agent agentToBeReplaced, Agent newAgent){
         int index=agents.indexOf(agentToBeReplaced);
         agents.set(index, newAgent);
 
@@ -87,20 +131,32 @@ public class Simulation implements Runnable{
         stats.removeObjectOfType(this.recognizeType(agentToBeReplaced));
     }
 
-    public void addGarlic(Garlic garlic){ //dodaje nowy czosnek na planszę i do listy garlics
+    /**
+     * Umieszcza nowy czosnek w symulacji i aktualizuje statystykę liczby czosnku
+     * * @param garlic Nowy czosnek do umieszczenia w symulacji
+     */
+    public void addGarlic(Garlic garlic){
         board.addGarlicToBoard(garlic);
         garlics.add(garlic);
 
         stats.addObjectOfType(ObjectType.GARLIC);
     }
-    public void removeGarlic(Garlic garlic){ //usuwa czosnek z planszy i z listy garlics
+
+    /**
+     * Usuwa zjedzony czosnek z planszy i listy czosnku symulacji.
+     * * @param garlic Czosnek do usunięcia.
+     */
+    public void removeGarlic(Garlic garlic){
         board.removeGarlicFromBoard(garlic);
         garlics.remove(garlic);
 
         stats.removeObjectOfType(ObjectType.GARLIC);
     }
 
-    private void tryAddNewPeople(){ //iteruje po wszystkich ludziach i wywołuje na nich metodę tryAdd
+    /**
+     * Wywołuje dla każdego człowieka w symulacji metodę próby dodania nowego człowieka.
+     */
+    private void tryAddNewPeople(){
         for(int i=0; i<agents.size();i++){
             if(agents.get(i) instanceof Human){
                 ((Human) agents.get(i)).tryAdd();
@@ -108,56 +164,81 @@ public class Simulation implements Runnable{
         }
     }
 
-    private void updateAgentStates(){ //iteruje po wszystkich agentach i aktualizuje ich stan( dla człowieka
-//        sprawdza czy dalej jest chroniony przed atakiem przez zjedzenie czosnku, dla wytrenowanego człowieka
-//        sprawdza to samo + czy będzie mógł rozrzucać i jeść czosnek w zależności od tego ile mineło kroków
-//        od poprzedniego rozrzucenia czosnku oraz aktualizuje jego strategię poruszania się w zależności od tego
-//        czy nadal posiada czosnek czy już nie. Dla wampirów updateCurrentState sprawdza, która jest godzina
-//        i jeśli 6:00 to się chowa, a 18:00 pojawia się z powrotem na planszy
+    /**
+     * Aktualizuje stany wewnętrzne wszystkich agentów.
+     * <p>
+     * Obejmuje m.in. licznik kroków do ponownego użycia czosnku
+     * czy zmianę stanu wampirów ze względu na godzinę symulacji
+     * </p>
+     */
+    private void updateAgentStates(){
         for(Agent agent : agents){
             agent.updateCurrentState();
         }
     }
-    private void moveAgents(){ //iteruje po wszystkich agentach i wywołuje ich metodę do poruszania się
+
+    /**
+     * Wywołuje metodę ruchu dla wszystkich agentów.
+     */
+    private void moveAgents(){
         for(Agent agent : agents){
             agent.move();
         }
     }
-    private void conductAgentInteractions(){ //iteruje po wszystkich agentach i wywołuje ich metodę interakcji
-//        z otoczeniem, implementującą ich wszystkie zachowania typu zjedzenie cozsnku, zaatakowanie, rozrzucenie
-//        czosnku itd
-//        System.out.println("Interakcje agentów");
+
+    /**
+     * Przeprowadza fazę interakcji między wszystkimi agentami w symulacji.
+     */
+    private void conductAgentInteractions(){
         for(int i=0;i<agents.size();i++){
             agents.get(i).interact();
         }
     }
-    private void tryRemoveAgents(){ //iteruje po wszystkich agentach i ich metodzie sprawdzającej czy powinni umrzeć
-//        jeśli tak, metoda danego agenta tryRemove() usunie tego agenta przy pomocy metody symulacji removeAgent()
+
+    /**
+     * Weryfikuje warunki śmierci dla wszystkich agentów.
+     * Jeśli warunek śmierci jest spełniony, agent jest usuwany z symulacji
+     */
+    private void tryRemoveAgents(){
         for(int i=0;i<agents.size();i++){
             if(agents.get(i).tryRemove()) i--;
         }
     }
 
 
-    //zwraca liczbe osob
+    /**
+     * Zwraca całkowitą liczbę ludzi w symulacji.
+     * * @return Liczba obiektów typu {@link Human}.
+     */
     public long getNumberOfHumanBeings(){
         long number = agents.stream().filter(agent -> agent instanceof Human).count();
         return number;
     }
 
+    /**
+     * Zwraca całkowitą liczbę wyszkolonych ludzi w symulacji.
+     * * @return Liczba obiektów typu {@link TrainedHuman}.
+     */
     //zwraca liczbe wyszkolonych osób
     public long getNumberOfTrainedHumanBeings(){
         long number = agents.stream().filter(agent -> agent instanceof TrainedHuman).count();
         return number;
     }
 
-
+    /**
+     * Zwraca całkowitą liczbę wampirów w symulacji.
+     * * @return Liczba obiektów typu {@link Vampire}.
+     */
     //zwraca liczbe wampirów
     public long getNumberOfVampires(){
         long number = agents.stream().filter(agent -> agent instanceof Vampire).count();
         return number;
     }
 
+    /**
+     * Pobiera granice kontenera na czosnek.
+     * * @return Tablica czteroelementowa zawierająca współrzędne: [X_min, X_max, Y_min, Y_max].
+     */
     public int[] getCoordinatesOfContainer() {
         int[] coords = new int[4];
         coords[0] = container.getX_min();
@@ -168,9 +249,15 @@ public class Simulation implements Runnable{
         return coords;
     }
 
-    /*synchronized metody*/
-    public synchronized void step(){ //metoda oznaczająca jeden krok symulacji i wywołująca wszystkie meotdy
-//        iterujące po agentach i zmieniające ich stan, położenie, przeprowadzjące ich interkację, śmerć, ...
+    /**
+     * Wykonuje pojedynczy, zsynchronizowany krok symulacji.
+     * <p>
+     * Metoda zawiera następujące po sobie fazy aktualizacji stanu agentów,
+     * dodawania nowych ludzi, ruchu, interakcji, usuwania agentów i aktualizacji stanu zegara symulacji
+     *
+     * </p>
+     */
+    public synchronized void step(){
         ConsoleColors.printlnBlue("\nKrok: "+clock.getStep()+ ", godzina: "+clock.getHour());
         updateAgentStates();
         tryAddNewPeople();
@@ -181,6 +268,12 @@ public class Simulation implements Runnable{
 
     }
 
+    /**
+     * Generuje aktualny snapshot planszy przeznaczony do późniejszego renderowania planszy w GUI.
+     * Mapuje obiekty znajdujące się w komórkach planszy na lekkie obiekty zawierające tylko dane potrzebne do
+     * prawidłowego wyrenderowania planszy
+     * * @return Lista obiektów do wyświetlenia lub {@code null}, jeśli świat nie został jeszcze zainicjalizowany.
+     */
     public synchronized ArrayList<ObjectToRender> getSnapshot(){
         if(!config.getWorldConfig().isInitiated()) return null;
         ArrayList<ObjectToRender> listToRender=new ArrayList<>();
@@ -195,6 +288,12 @@ public class Simulation implements Runnable{
         return listToRender;
     }
 
+    /**
+     * Identyfikuje i mapuje dany obiekt na obiekt typu {@link ObjectType} zawierający informację
+     * o typie obiektu
+     * * @param obj Dowolny obiekt obecny w symulacji.
+     * @return Odpowiadający obiektowi {@link ObjectType} lub {@code null}, jeśli obiekt nie został poprawnie zidentyfikowany
+     */
     public ObjectType recognizeType(Object obj){
         if(obj instanceof Vampire){
             return ObjectType.VAMPIRE;
