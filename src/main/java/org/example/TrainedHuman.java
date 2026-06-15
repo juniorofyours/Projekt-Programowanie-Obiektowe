@@ -21,12 +21,12 @@ public class TrainedHuman extends Human{
     /*zmienne instancyjne*/
     private float rectruitmentProb;
     private float throwProb;
-    private int garlicStock;
-    private int garlicStockMax;
+    protected int garlicStock;
+    protected int garlicStockMax; //protected - bo używane w testach jednostkowych
     private int lastWeakeningStep;
-    private boolean weakend;
-    private MovingStrategy collectMoving;
-    private MovingStrategy randomMoving;
+    protected boolean weakend;
+    protected MovingStrategy collectMoving;
+    protected MovingStrategy randomMoving;
 
     /*stałe*/
     final int MAX_NUMB_OF_TRAINED_HUMANBEINGS = 100;
