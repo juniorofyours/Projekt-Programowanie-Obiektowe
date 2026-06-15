@@ -21,12 +21,12 @@ public class Vampire extends Agent{
 
     /**
      * Konstruuje nową instancję wampira z określonymi parametrami.
-     * * @param simulation  Instancja symulacji.
-     * @param board       Plansza dwuwymiarowa, na której osadzony jest agent.
-     * @param x           Początkowa współrzędna x.
-     * @param y           Początkowa współrzędna y.
-     * @param energyBoost Ilość energii zyskiwana po ataku na człowieka.
-     * @param energyLoss  Ilość energii tracona przy ataku przez czosnek.
+     * @param simulation            Instancja symulacji.
+     * @param board                 Plansza dwuwymiarowa, na której osadzony jest agent.
+     * @param x                     Początkowa współrzędna x.
+     * @param y                     Początkowa współrzędna y.
+     * @param energyBoost           Ilość energii zyskiwana po ataku na człowieka.
+     * @param energyLoss            Ilość energii tracona przy ataku przez czosnek.
      */
     public Vampire(Simulation simulation, Board board, int x, int y, int energyBoost, int energyLoss){
         super(simulation,board, x, y, energyBoost, energyLoss);
@@ -95,7 +95,7 @@ public class Vampire extends Agent{
      * Atak zachodzi tylko wtedy, gdy człowiek nie jest chroniony.
      * Wampir podwyższa wtedy swój poziom energii i zmniejsza energię człowieka.
      * </p>
-     * * @param human Atakowany człowiek.
+     * @param human                 Atakowany człowiek.
      */
     private void attack(Human human){
         if(human.isSafe()) return;
@@ -111,7 +111,7 @@ public class Vampire extends Agent{
      * Wampir je czosnek, usuwając go z całej symulacji.
      * W wyniku kontaktu traci energię.
      * </p>
-     * * @param garlic Czosnek jedzony przez wampira i atakujący go.
+     * @param garlic                Czosnek jedzony przez wampira i atakujący go.
      */
     private void getAttacked(Garlic garlic){
         simulation.removeGarlic(garlic);

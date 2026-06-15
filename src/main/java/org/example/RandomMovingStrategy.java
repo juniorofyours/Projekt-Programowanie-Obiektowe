@@ -7,7 +7,7 @@ import java.util.Random;
  * <p>
  * Klasa implementuje interfejs {@link MovingStrategy}. W każdym kroku symulacji
  * losuje wektor przesunięcia w pionie i poziomie w zakresie od -1 do 1. Strategia
- * bezpiecznie ponawiania próby poruszania się w przypadku natrafienia na komórkę zablokowaną (wyłączoną z ruchu).
+ * bezpiecznie ponawia próby poruszania się w przypadku natrafienia na komórkę zablokowaną (wyłączoną z ruchu).
  * (np. obszar zajęty przez kontener na czosnek).
  * </p>
  */

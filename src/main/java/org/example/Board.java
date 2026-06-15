@@ -144,18 +144,27 @@ public class Board {
         }
     }
 
-    //dla przesztreni torusowej:
+    /**
+     * Wyznacza najbliższą komórkę dla zadanego przedziału [{@param min}, {@param max}] dla agenta znajdującego się
+     * na komórce ze współrzędną {@param coord}. Działa tylko dla jednej zadanej osi (OX lub OY). Uwzględnia charakter
+     * torusowy planszy.
+     * @param coord                     Współrzędna, na której znajduje się agent.
+     * @param min                       Współrzędna, która ma najmniejszą wartość z zadanego przedziału.
+     * @param max                       Współrzędna, która ma najmniejszą wartość z zadanego przedziału.
+     * @param sizeOfBoard               Rozmiar planszy w danej osi (OX lub OY).
+     * @return najbliższa komórka       Komórka z zadanego przedziału planszy, która jest
+     * najbliżej agenta wg zadanej osi.
+     */
     public static int getClosestCoordinate(int coord, int min, int max, int sizeOfBoard) {
         //sprawdzanie dystansu bez zawijania w przestrzeni torusowej
-        int basic = Math.max(min, Math.min(coord, max)); //najblizszy punkt w standardowym ruchu
+        int basic = Math.max(min, Math.min(coord, max)); //najbliższy punkt w standardowym ruchu
         int basicDistance = distanceTorus(coord, basic, sizeOfBoard);
 
-        //sprawdzenie odleglosci przez lewa / dolna krawedz planszy (min):
+        //sprawdzenie odległości przez lewą / dolna krawędź planszy (min):
         int distanceThroughMin = distanceTorus(coord, min, sizeOfBoard);
-
-        //sprawdzenie odleglosci przez prawa / gorna krawedz planszy (max):
+        //sprawdzenie odległości przez prawą / górna krawędź planszy (max):
         int distanceThroughMax = distanceTorus(coord, max, sizeOfBoard);
-
+        //zmienna, która zostanie zwrócona:
         int resultCoord=basic;
         int resultDistance = basicDistance;
 
@@ -165,19 +174,38 @@ public class Board {
         }
         if(distanceThroughMax < resultDistance) {
             resultCoord = max;
-
         }
 
         return resultCoord;
     }
 
-    //zwraca liczbe komorek, ktorą należy pokonać, aby droga była jak najmniejsza (uwzględniając charakter torusowy planszy)
-    public static int distanceTorus(int coord1, int coord2, int sizeOfBoard) { //dziala dla jednej osi
+    /**
+     * Zwraca liczbę komórek, którą należy pokonać, aby droga była jak najmniejsza,
+     * uwzględniając charakter torusowy planszy. Działa na jednej wybranej osi (OX lub OY)
+     * @param coord1                    Współrzędna jednej komórki.
+     * @param coord2                    Współrzędna drugiej komórki.
+     * @param sizeOfBoard               Rozmiar planszy w danej osi (OX lub OY).
+     * @return dystans bliższy          Dystans, który jest mniejszy do pokonania (czyli droga standardowa lub
+     * zawijająca i przechodząca przez krawędź planszy).
+     */
+    public static int distanceTorus(int coord1, int coord2, int sizeOfBoard) {
         int distance = Math.abs(coord1-coord2);
-        return Math.min(distance, sizeOfBoard - distance); //zwraca dystans bliższy (czy droga standardowa, czy zawijajaca jest lepsza)
+        return Math.min(distance, sizeOfBoard - distance);
     }
 
-    //minX, maxX itd - sa to wspolrzedne rogów kontenera
+    /**
+     * Zwraca najbliższą do agenta komórkę kontenera, korzystając z metody {@code getClosestCoordinate()}.
+     * <p>
+     *     Dana metoda jest używana dla wyznaczenia drogi do kontenera przez osobę wyszkoloną.
+     * </p>
+     * @param x                         Współrzędna komórki, na której znajduje się agent (oś OX).
+     * @param y                         Współrzędna komórki, na której znajduje się agent (oś OY).
+     * @param minX                      Współrzędna komórki, w której zaczyna się kontener (oś OX).
+     * @param maxX                      Współrzędna komórki, w której kończy się kontener (oś OX).
+     * @param minY                      Współrzędna komórki, w której zaczyna się kontener (oś OY).
+     * @param maxY                      Współrzędna komórki, w której kończy się kontener (oś OY).
+     * @return najbliższa do agenta komórka kontenera
+     */
     public Cell getClosestCellContainingGarlicContainer(int x, int y, int minX, int maxX, int minY, int maxY){
 
         int nearestX = getClosestCoordinate(x, minX, maxX, this.getWidth());
@@ -186,10 +214,9 @@ public class Board {
         return grid[nearestX][nearestY];
     }
 
-
     /**
      * Pobiera z siatki obiekt komórki o wskazanych współrzędnych.
-     * * @param x Współrzędna pozioma planszy
+     * @param x Współrzędna pozioma planszy
      * @param y Współrzędna pionowa planszy
      * @return Obiekt {@link Cell} o podanych współrzędnych.
      */
