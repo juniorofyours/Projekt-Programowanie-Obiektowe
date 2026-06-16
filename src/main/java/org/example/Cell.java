@@ -113,12 +113,12 @@ public class Cell {
      * Pobiera pierwszy priorytetowy obiekt znajdujący się w komórce, służący później do renderowania graficznego.
      * <p>
      * Wybór obiektu odbywa się według hierarchii ważności:
+     * </p>
      * <ol>
      * <li>Pierwszy agent z listy</li>
      * <li>Pierwszy czosnek z listy (jeśli nie ma agentów)</li>
      * <li>Komórka kontenera (jeśli nie ma agentów i czosnku)</li>
      * </ol>
-     * </p>
      * * @return Obiekt typu {@link Agent}, {@link Garlic} lub {@link GarlicContainerCell} albo {@code null}, jeśli komórka jest pusta.
      */
     public Object getFirstObject(){

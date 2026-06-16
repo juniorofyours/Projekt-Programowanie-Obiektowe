@@ -22,7 +22,7 @@ public enum ObjectType {
      * Tekstowy opis danego typu obiektu.
      * * -- GETTER --
      * Pobiera pełny opis typu.
-     * @return Tekstowy opis typu.
+     * * @return Tekstowy opis typu.
      */
     private final String description;
 

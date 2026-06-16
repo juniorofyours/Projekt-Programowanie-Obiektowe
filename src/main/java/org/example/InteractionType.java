@@ -22,7 +22,7 @@ public enum InteractionType {
      * Tekstowy opis danego typu interakcji.
      * * -- GETTER --
      * Pobiera pełny opis tekstowy interakcji.
-     * @return Tekstowy opis interakcji.
+     * * @return Tekstowy opis interakcji.
      */
     private final String description;
 

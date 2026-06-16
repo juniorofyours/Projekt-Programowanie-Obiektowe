@@ -18,14 +18,14 @@ public class SimulationStats {
      * Mapa przechowująca aktualną, liczbę obiektów danego typu na planszy.
      * * -- GETTER --
      * Zwraca bezpieczną wątkowo mapę ze statystykami obiektów.
-     * @return Mapa typów i odpowiadającej im liczby obiektów.
+     * * @return Mapa typów i odpowiadającej im liczby obiektów.
      */
     private final Map<ObjectType, Integer> objectsMap=new ConcurrentHashMap<>();
     /**
      * Mapa przechowująca sumaryczną liczbę wystąpień poszczególnych interakcji w symulacji.
      * * -- GETTER --
      * Zwraca bezpieczną wątkowo mapę z liczbami interakcji
-     * @return Mapa par typów interkacji i całkowitej liczby poszczególnych interakcji.
+     * * @return Mapa par typów interkacji i całkowitej liczby poszczególnych interakcji.
      */
     private final Map<InteractionType, Integer> interactionsMap=new ConcurrentHashMap<>();
 
