@@ -2,7 +2,7 @@
 Projekt programowania obiektowego "Symulacja wampirów".
 <br><br>
 ## 📚 Dokumentacja
-Dokumentacja kodu wygenerowana z pomocą Javadoc jest dostępna [TUTAJ](https://kkos229.github.io/VampireSimulationDocumentation/)
+Dokumentacja kodu wygenerowana za pomocą Javadoc jest dostępna [TUTAJ](https://kkos229.github.io/VampireSimulationDocumentation/)
 <br><br>
 ## 🚀 Szybki start (Quick Start)
 
